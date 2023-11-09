@@ -3,9 +3,15 @@ LDLIBS := -lboost_string_algo
 
 OUT := a.out
 
+SOURCE.d := source/
+TEST.d   := test/
+
 main:
-	${LEX} ${LFLAGS} -o main.yy.cpp main.l
-	${CXX} main.yy.cpp -o ${OUT}
+	${LEX} ${LFLAGS} -o ${SOURCE.d}/main.yy.cpp ${SOURCE.d}/main.l
+	${CXX} ${SOURCE.d}/main.yy.cpp -o ${OUT}
 
 run:
-	./${OUT} draft.csml
+	./${OUT} ${TEST.d}/draft.csml
+
+clean:
+	-rm ${OUT}
