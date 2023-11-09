@@ -25,19 +25,18 @@ static const char ATTRIBUTE_VALUE_END[]   = "'";
 
 bool push_tag() {
 	if (tag_candidate == "") {
+		exit(3);
 		return false;
 	}
 
 	boost::trim(tag_candidate);
 	tag_stack.push(tag_candidate);
-	ECHOS(("<" + tag_stack.top() + ">").c_str());
 	tag_candidate = "";
 
 	return true;
 }
 
 bool pop_tag() {
-	ECHOS(("</" + tag_stack.top() + ">").c_str());
 	tag_stack.pop();
 	tag_candidate = "";
 
@@ -68,20 +67,23 @@ identifier	[A-z][A-z0-9]*
 	BEGIN COMMENT_MULTILINE;
 	ECHOS(COMMENT_START);
 }
-{identifier}{wsnl}+	{
+{identifier}{wsnl}*	{
 	ECHO_CANDIDATE;
 	tag_candidate = yytext;
 	//BEGIN SWALLOW;
 }
 \(	{
 	push_tag();
+	ECHOS(("<" + tag_stack.top() + " ").c_str());
 	BEGIN HEAD;
 }
 \{	{
 	push_tag();
+	ECHOS(("<" + tag_stack.top() + ">").c_str());
 }
 \}	{
 	ECHO_CANDIDATE;
+	ECHOS(("</" + tag_stack.top() + ">").c_str());
 	pop_tag();
 }
 .|{wsnl}	{
@@ -124,20 +126,33 @@ identifier	[A-z][A-z0-9]*
 }
 
 <HEAD>{
-\){wsnl}\{	{
+\){wsnl}*\{	{
+	ECHOS(">");
 	BEGIN BODY;
 }
-:	{
+:{wsnl}*	{
 	ECHOS("=");
 	ECHOS(ATTRIBUTE_VALUE_START);
 	BEGIN HEAD_VALUE;
 }
-.*	{
+.|\n	{
 	ECHO;
 }
 }
 
 <HEAD_VALUE>{
+,	{
+	ECHOS(ATTRIBUTE_VALUE_END);
+	BEGIN HEAD;
+}
+\)	{
+	ECHOS(ATTRIBUTE_VALUE_END);
+	yyless(0);
+	BEGIN HEAD;
+}
+.|\n	{
+	ECHO;
+}
 }
 
 %%
