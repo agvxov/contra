@@ -1,55 +1,77 @@
 %{
 #include <stdio.h>
 #include <stack>
+#include <string>
+#include <boost/algorithm/string/trim.hpp>
 
-#define ECHOS(s) fwrite(s, strlen(s), 1, yyout)
+#define ECHOS(s) fwrite(s, strlen(s), sizeof(char), yyout)
+#define ECHO_CANDIDATE _ECHO_CANDIDATE()
 
 std::stack<std::string> tag_stack;
 std::string tag_candidate = "";
+
+static
+void _ECHO_CANDIDATE(){
+	if (tag_candidate != "") {
+		ECHOS(tag_candidate.c_str());
+	}
+}
+
+static const char COMMENT_START[] = "<!--";
+static const char COMMENT_END[]   = " -->";
+
+static const char ATTRIBUTE_VALUE_START[] = "'";
+static const char ATTRIBUTE_VALUE_END[]   = "'";
 
 bool push_tag() {
 	if (tag_candidate == "") {
 		return false;
 	}
+
+	boost::trim(tag_candidate);
 	tag_stack.push(tag_candidate);
-	ECHOS("<" + tag_stack.top() + ">");
+	ECHOS(("<" + tag_stack.top() + ">").c_str());
 	tag_candidate = "";
+
+	return true;
 }
 
 bool pop_tag() {
-	ECHOS("</" + tag_stack.top() + ">");
+	ECHOS(("</" + tag_stack.top() + ">").c_str());
 	tag_stack.pop();
+	tag_candidate = "";
+
+	return true;
 }
 
-/*
-	q0(.)  -> q1
-	q0(\d) -> q2
-	q1(\d) -> qe
-	q2(\d) -> q2
-	q2(.)  -> qe
-	qe(\d) -> qe
-*/
 %}
 
-%x HEAD STRING COMMENT COMMENT_MULTILINE
-%s BODY
+%option noyywrap
+%option nodefault
+
+%x BODY HEAD HEAD_VALUE SWALLOW STRING COMMENT COMMENT_MULTILINE
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
+identifier	[A-z][A-z0-9]*
 
 %%
+
+	BEGIN BODY;
 
 <BODY>{
 \/\/	{
 	BEGIN COMMENT;
-	ECHOS("<!--");
+	ECHOS(COMMENT_START);
 }
 \/\*	{
 	BEGIN COMMENT_MULTILINE;
-	ECHOS("<!--");
+	ECHOS(COMMENT_START);
 }
-w+	{
+{identifier}{wsnl}+	{
+	ECHO_CANDIDATE;
 	tag_candidate = yytext;
+	//BEGIN SWALLOW;
 }
 \(	{
 	push_tag();
@@ -59,7 +81,21 @@ w+	{
 	push_tag();
 }
 \}	{
+	ECHO_CANDIDATE;
 	pop_tag();
+}
+.|{wsnl}	{
+	ECHO;
+}
+}
+
+<SWALLOW>{
+{wsnl}	{
+	;
+}
+. {
+	yyless(0);
+	BEGIN BODY;
 }
 }
 
@@ -71,28 +107,42 @@ w+	{
 
 <COMMENT>{
 \n	{
-	ECHOS("-->");
+	ECHOS(COMMENT_END);
+	ECHO;
 	BEGIN BODY;
 }
 }
 
 <COMMENT_MULTILINE>{
-\n	{
-	ECHO;
-}
 \*\/	{
-	ECHOS("-->");
+	ECHOS(COMMENT_END);
 	BEGIN BODY;
+}
+.|\n	{
+	ECHO;
 }
 }
 
-<HEAD> {
+<HEAD>{
+\){wsnl}\{	{
+	BEGIN BODY;
+}
+:	{
+	ECHOS("=");
+	ECHOS(ATTRIBUTE_VALUE_START);
+	BEGIN HEAD_VALUE;
+}
 .*	{
 	ECHO;
 }
-)[wsnl]{	{
-	BEGIN BODY;
 }
+
+<HEAD_VALUE>{
 }
 
 %%
+
+signed main(int argc, char * * argv) {
+	yyin = fopen(argv[1], "r");
+	yylex();
+}
