@@ -6,9 +6,13 @@
 
 #include "cli.h"
 
-extern FILE * yyin;
-extern FILE * yyout;
-extern int yylex(void);
+#define DECLARE_LEXER(x)       \
+	extern FILE * x ## in;     \
+	extern FILE * x ## out;    \
+	extern int x ## lex(void); \
+
+DECLARE_LEXER(csml);
+DECLARE_LEXER(xml);
 
 const char DEFAULT_QUOTE = '\'';
 char quote = DEFAULT_QUOTE;
@@ -16,11 +20,11 @@ char * output = NULL;
 char * input  = NULL;
 const char * const csml_extension = ".csml";
 
-enum input_type_t {
+enum class input_type_t {
 	CSML,
 	XML,
 	AUTO_DETECT,
-} input_type = AUTO_DETECT;
+} input_type = input_type_t::AUTO_DETECT;
 
 const char * const auto_output_extensions[] = {csml_extension, ".html"};
 
@@ -49,8 +53,41 @@ char * output_name_from_input_name(const char * const input, const char * const 
     return r;
 }
 
+inline
+void try_fopen(FILE * &file, const char * const path, const char * const mode) {
+	file = fopen(path, mode);
+	if (!file) {
+		fprintf(stderr, "Error opening file '%s'.\n", path);
+		fflush(stderr);
+		exit(4);
+	} 
+}
+
+void yylex(FILE * &yyin, FILE * &yyout, int (*yylex_)(void)) {
+	/* --- Preparation --- */
+	if (output) {
+		try_fopen(yyout, output, "w");
+	} else {
+		yyout = stdout;
+	}
+	try_fopen(yyin, input, "r");
+
+
+	/* --- Meat --- */
+	yylex_();
+
+	/* --- Clean up --- */
+	if (yyin != stdin) {
+		fclose(yyin);
+	}
+	if (yyout != stdout) {
+		fclose(yyout);
+	}
+	free(output);
+}
+
 signed main(int argc, char * * argv) {
-	switch (parse_r1_arguments(argc - 1, argv + 1)) {
+	switch (parse_round1_arguments(argc - 1, argv + 1)) {
 		case 1: {
 		} return 0;
 		case 2: {
@@ -59,7 +96,7 @@ signed main(int argc, char * * argv) {
 		} break;
 	}
 	
-	for (int n = argc - 1; n; n--) {
+	for (int n = 1; n < argc; n++) {
 		if (!strcmp(argv[n], "-c")) {
 			input_type = input_type_t::CSML;
 		} else if (!strcmp(argv[n], "-x")) {
@@ -71,38 +108,30 @@ signed main(int argc, char * * argv) {
 			++n;
 			output = argv[n];
 		} else {
-			/* --- Preparation --- */
 			input = argv[n];
 
-			if (input_type == AUTO_DETECT) {
+			if (input_type == input_type_t::AUTO_DETECT) {
 				if (!strcmp(input + strlen(input) - (sizeof(csml_extension)-1), csml_extension)) {
-					input_type = CSML;
+					input_type = input_type_t::CSML;
 				} else {
-					input_type = XML;
+					input_type = input_type_t::XML;
 				}
 			}
 
-			if (output) {
-				yyout = fopen(output, "w");
-			} else {
-				yyout = stdout;
+			switch (input_type) {
+				case input_type_t::CSML: {
+					yylex(csmlin, csmlout, csmllex);
+				} break;
+				case input_type_t::XML: {
+					yylex(xmlin, xmlout, xmllex);
+				} break;
+				default: {
+				};
 			}
 
-			yyin  = fopen(input, "r");
-			yyout = fopen(output, "w");
-
-			/* --- Meat --- */
-			yylex();
-
-			/* --- Clean up --- */
-			if (yyin != stdin) {
-				fclose(yyin);
-			}
-			if (yyout != stdout) {
-				fclose(yyout);
-			}
-			free(output);
 			output = NULL;
 		}
 	}
+
+	return 0;
 }

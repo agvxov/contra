@@ -12,13 +12,13 @@ SOURCE.d := source/
 OBJECT.d := object/
 TEST.d   := test/
 
-SOURCE := main.cpp xml.cpp cli.cpp
+SOURCE := main.cpp xml.cpp csml.cpp cli.cpp
 OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT := ${OBJECT:.cpp=.o}
 OBJECT := ${OBJECT:.c=.o}
 
 %.cpp: %.l
-	${LEX} ${LFLAGS} -o $@ $<
+	${LEX} --prefix=$(basename $(notdir $<)) ${LFLAGS} -o $@ $<
 
 ${OBJECT.d}/%.o: ${SOURCE.d}/%.cpp
 	${COMPILE.cpp} -o $@ $<
@@ -26,9 +26,11 @@ ${OBJECT.d}/%.o: ${SOURCE.d}/%.cpp
 ${OUT}: ${OBJECT}
 	${LINK.cpp} -o $@ ${OBJECT} ${LDLIBS}
 
-run:
-#	./${OUT} ${TEST.d}/draft.csml
-	./${OUT} ${TEST.d}/draft.html
+test:
+	bat ${TEST.d}/draft.csml
+	./${OUT} -c ${TEST.d}/draft.csml
+	bat ${TEST.d}/draft.html
+	./${OUT} -x ${TEST.d}/draft.html
 
 clean:
 	-rm ${OUT}

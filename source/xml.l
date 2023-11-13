@@ -10,6 +10,7 @@ unsigned long long comment_begining;
 
 %option noyywrap
 %option nodefault
+%option noyylineno
 
 %x TAG_START TAG_MAYBE TAG COMMENT STRING
 

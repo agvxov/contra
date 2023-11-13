@@ -17,8 +17,8 @@ const char * help_message =
 "    -h        : print help and quit\n"
 ;
 
-signed parse_r1_arguments(int argc, char * * argv){
-	const char * const optstring = "hv" "cxo:q:";
+signed parse_round1_arguments(int argc, char * * argv){
+	const char * const optstring = "-" "hv" "cxo:q:";
 
     static struct option long_options[] = {
         {"help", no_argument, 0, 'h'},

@@ -16,6 +16,8 @@ void _ECHO_CANDIDATE(){
 	}
 }
 
+#define ECHO_CANDIDATE _ECHO_CANDIDATE()
+
 static const char COMMENT_START[] = "<!--";
 static const char COMMENT_END[]   = " -->";
 
@@ -46,6 +48,7 @@ bool pop_tag() {
 
 %option noyywrap
 %option nodefault
+%option noyylineno
 
 %x BODY HEAD HEAD_VALUE SWALLOW STRING COMMENT COMMENT_MULTILINE
 
