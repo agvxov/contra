@@ -6,7 +6,7 @@ ifeq ($(DEBUG), 1)
   CXXFLAGS += -DDEBUG -O0 -ggdb -pg -fno-inline	
 endif
 
-OUT := a.out
+OUT := cwheel
 
 SOURCE.d := source/
 OBJECT.d := object/
