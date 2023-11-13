@@ -1,11 +1,10 @@
 %{
+#include "scanner.h"
+
 #include <stdio.h>
 #include <stack>
 #include <string>
 #include <boost/algorithm/string/trim.hpp>
-
-#define ECHOS(s) fwrite(s, strlen(s), sizeof(char), yyout)
-#define ECHO_CANDIDATE _ECHO_CANDIDATE()
 
 std::stack<std::string> tag_stack;
 std::string tag_candidate = "";
@@ -76,6 +75,10 @@ identifier	[A-z][A-z0-9]*
 	push_tag();
 	ECHOS(("<" + tag_stack.top() + " ").c_str());
 	BEGIN HEAD;
+}
+;	{
+	ECHOS(("<" + tag_candidate + "/>").c_str());
+	tag_candidate = "";
 }
 \{	{
 	push_tag();
@@ -156,8 +159,3 @@ identifier	[A-z][A-z0-9]*
 }
 
 %%
-
-signed main(int argc, char * * argv) {
-	yyin = fopen(argv[1], "r");
-	yylex();
-}

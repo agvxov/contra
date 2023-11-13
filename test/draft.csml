@@ -1,9 +1,10 @@
-// DOCTYPE HTML
+// DOCTYPE HTML 
 html {
 	head {
 	}
 	body {
-		div(class: myclass) {
+		hr;
+		div (class: myclass) {
 			lorem ipsum
 		}
 	}

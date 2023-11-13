@@ -1,3 +1,4 @@
 *.out
 *.o
 *.yy.*
+.gdb_history

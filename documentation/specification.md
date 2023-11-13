@@ -44,18 +44,27 @@ and seemlessly translate it in the end.
 ```
     <tag> [(<head>)] {<body>}
 ```
+```
+    <tag>;
+```
 Example:
 ```
-    div (?! find a stand alone attribute) { lorem ipsum }
+    textarea (readonly) { lorem ipsum }
+```
+```
+    br;
 ```
 
 The last __identifier__,
 defined by this regular expression: `[A-z][A-z0-9]*`,
-before a (optional) _head_ or _body_
+before a (optional) _head_, _body_ or semi-colon
 is considered to be a __tag__.
 CSML by itself does not enforce any (sub)set of words to be "valid"
 (however, related tools might).
 Each _tag_ is pushed into a stack and later popped by the end of a body being found.
+
+If the _tag_ is followed by a semi-colon (';'),
+it's a self-closing tag.
 
 The __head__ holds _attributes_.
 A missing _head_ signals that there are no attributes to be translated.
@@ -78,6 +87,7 @@ List of escaped special characters:
     + \}
     + \,
     + \:
+    + \;
 Note, that they are not requred to be always escaped,
 but are highly advised.
 
@@ -118,7 +128,7 @@ are different sides of the same coin.
 ```
     ?! [options] <file>+
         -c        : the input is to be force interpeted as CSML
-        -?        : the input is to be force interpeted as XML/HTML
+        -x        : the input is to be force interpeted as XML/HTML
         -o <file> : specify output file name for the NEXT file
         -q <char> : use <char> for quoting (default: "'")
         -v        : print version and quit
