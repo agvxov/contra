@@ -1,5 +1,5 @@
-# ?! specification
-> The ?! utility converts so called the "C Style Markup Language" to HTML/XML and back.
+# Cwheel specification
+> The CWheel utility converts so called the "C Style Markup Language" to HTML/XML and back.
 > The primary aim is to maximize both editability and readability by dynamizing the markup representation.
 
 ## C Style Markup Language
@@ -92,7 +92,7 @@ Note, that they are not requred to be always escaped,
 but are highly advised.
 
 #### Comments
-CSML supports C99 (?!) style comments,
+CSML supports C99 style comments,
 both single and multi line.
 That is:
 ```C
@@ -109,24 +109,44 @@ This includes whitespace too.
 
 
 ## Translation
-?! translates both ways in a single step,
+CWheel translates both ways in a single step,
 from top to bottom,
 perserving formatting.
 
 Example:
 ```
-    ?!
+<!-- DOCTYPE HTML -->
+<html>
+	<head>
+	</head>
+	<body>
+		<hr/>
+		<div class='myclass'>
+			lorem ipsum
+		</div>
+	</body>
+</html>
 ```
 and
 ```
-    ?!
+// DOCTYPE HTML 
+html {
+	head {
+	}
+	body {
+		hr;
+		div (class: myclass) {
+			lorem ipsum
+		}
+	}
+}
 ```
 are different sides of the same coin.
 
 
 ## Cli
 ```
-    ?! [options] <file>+
+    cwheel [options] <file>+
         -c        : the input is to be force interpeted as CSML
         -x        : the input is to be force interpeted as XML/HTML
         -o <file> : specify output file name for the NEXT file
