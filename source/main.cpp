@@ -83,7 +83,6 @@ void yylex(FILE * &yyin, FILE * &yyout, int (*yylex_)(void)) {
 	if (yyout != stdout) {
 		fclose(yyout);
 	}
-	free(output);
 }
 
 signed main(int argc, char * * argv) {
