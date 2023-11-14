@@ -19,7 +19,7 @@ void _ECHO_CANDIDATE(){
 #define ECHO_CANDIDATE _ECHO_CANDIDATE()
 
 static const char COMMENT_START[] = "<!--";
-static const char COMMENT_END[]   = " -->";
+static const char COMMENT_END[]   = "-->";
 
 static const char ATTRIBUTE_VALUE_START[] = "'";
 static const char ATTRIBUTE_VALUE_END[]   = "'";
