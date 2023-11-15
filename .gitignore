@@ -1,5 +1,7 @@
 *.out
+**/out/
 *.o
 *.yy.*
 .gdb_history
 cwheel
+**/node_modules
