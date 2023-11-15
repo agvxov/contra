@@ -5,6 +5,7 @@
 #include <libgen.h>
 #include <vector>
 #include <string>
+#include <map>
 
 #include "cli.h"
 #include "globals.h"
@@ -24,6 +25,10 @@ char quote = DEFAULT_QUOTE;
 char * output = NULL;
 char * input  = NULL;
 const char * const csml_extension = ".csml";
+
+const std::map<const char * const, std::vector<std::string>> sets = {
+	{"$html", {"style", "script"}},
+};
 
 enum class input_type_t {
 	CSML,
@@ -116,7 +121,16 @@ signed main(int argc, char * * argv) {
 			char * data = strtok(argv[n], delimiter);
 			int i = 0;
 			do {
-				ignore_list.emplace_back(data);
+				if (data[0] == '$') {
+					const auto &&set = sets.find("$html");
+					[[ likely ]] if (set != sets.end()) {
+						ignore_list.insert(ignore_list.begin(), set->second.begin(), set->second.end());
+					} else {
+						exit(UNKNOWN_SET);
+					}
+				} else [[ likely ]] {
+					ignore_list.emplace_back(data);
+				}
 				++i;
 			} while((data = strtok(NULL, delimiter), data));
 		} else if (!strcmp(argv[n], "-o")) {
