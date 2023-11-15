@@ -23,7 +23,7 @@ function! CWheel()
 		let force_flag = ' -x '
 	endif
 
-	let command = '../cwheel ' . force_flag . ' -o ' . shellescape(output_file) . ' ' . shellescape(current_file)
+	let command = 'cwheel ' . force_flag . ' -o ' . shellescape(output_file) . ' ' . shellescape(current_file)
 	let output =  system(command, v:true)
 
 	if v:shell_error
