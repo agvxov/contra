@@ -8,7 +8,7 @@
 #include <map>
 
 #include "cli.h"
-#include "globals.h"
+#include "exit_values.h"
 
 #define DECLARE_LEXER(x)       \
 	extern FILE * x ## in;     \
