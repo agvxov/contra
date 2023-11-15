@@ -47,9 +47,9 @@ code:
 
 test:
 	bat ${TEST.d}/draft.csml
-	./${OUT} -c ${TEST.d}/draft.csml
+	./${OUT} -i '$$html' -c ${TEST.d}/draft.csml
 	bat ${TEST.d}/draft.html
-	./${OUT} -x ${TEST.d}/draft.html
+	./${OUT} -i '$$html' -x ${TEST.d}/draft.html
 
 clean:
 	-rm ${OUT}
