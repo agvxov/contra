@@ -1,16 +1,19 @@
 .PHONY: clean test run
 
 ifeq ($(DEBUG), 1)
-  LFLAGS += --debug --trace
-  CXXFLAGS +=	-Wall -Wextra -Wpedantic 
+  LFLAGS   += --debug --trace
+  CXXFLAGS += -Wall -Wextra -Wpedantic 
   CXXFLAGS += -DDEBUG -O0 -ggdb -pg -fno-inline	
+else
+  CXXFLAGS += -O3 -fno-stack-protector -fno-exceptions -fno-rtti
 endif
 
 OUT := cwheel
 
-SOURCE.d := source/
-OBJECT.d := object/
-TEST.d   := test/
+SOURCE.d  := source/
+OBJECT.d  := object/
+TEST.d    := test/
+INSTALL.d := /bin/
 
 SOURCE := main.cpp xml.cpp csml.cpp cli.cpp
 OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
@@ -25,6 +28,12 @@ ${OBJECT.d}/%.o: ${SOURCE.d}/%.cpp
 
 ${OUT}: ${OBJECT}
 	${LINK.cpp} -o $@ ${OBJECT} ${LDLIBS}
+
+install:
+	cp ${OUT} ${INSTALL.d}/${OUT}
+
+uninstall:
+	${RM} ${INSTALL.d}/${OUT}
 
 test:
 	bat ${TEST.d}/draft.csml
