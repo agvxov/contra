@@ -3,8 +3,11 @@
 #include <string.h>
 #include <stddef.h>
 #include <libgen.h>
+#include <vector>
+#include <string>
 
 #include "cli.h"
+#include "globals.h"
 
 #define DECLARE_LEXER(x)       \
 	extern FILE * x ## in;     \
@@ -13,6 +16,8 @@
 
 DECLARE_LEXER(csml);
 DECLARE_LEXER(xml);
+
+std::vector<std::string> ignore_list;
 
 const char DEFAULT_QUOTE = '\'';
 char quote = DEFAULT_QUOTE;
@@ -103,6 +108,15 @@ signed main(int argc, char * * argv) {
 		} else if (!strcmp(argv[n], "-q")) {
 			++n;
 			quote = argv[n][0];
+		} else if (!strcmp(argv[n], "-i")) {
+			++n;
+			const char * delimiter = ":";
+			char * data = strtok(argv[n], delimiter);
+			int i = 0;
+			do {
+				ignore_list.emplace_back(data);
+				++i;
+			} while((data = strtok(NULL, delimiter), data));
 		} else if (!strcmp(argv[n], "-o")) {
 			++n;
 			output = argv[n];

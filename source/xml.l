@@ -5,14 +5,14 @@
 
 bool is_comment_multiline = false;
 unsigned long long comment_begining;
-
+std::string current_tag;
 %}
 
 %option noyywrap
 %option nodefault
 %option noyylineno
 
-%x TAG_START TAG_MAYBE TAG COMMENT STRING
+%x TAG_START TAG_MAYBE TAG COMMENT STRING IGNORE
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
@@ -58,6 +58,7 @@ identifier	[A-z][A-z0-9]*
 }
 {identifier}+	{
 	ECHO;
+	current_tag = yytext;
 	BEGIN TAG_MAYBE;
 }
 }
@@ -65,7 +66,7 @@ identifier	[A-z][A-z0-9]*
 <TAG_MAYBE>{
 \>	{
 	ECHOS(" {");
-	BEGIN INITIAL;
+	BEGIN (do_ignore(current_tag) ? IGNORE : INITIAL);
 }
 \/\>	{
 	ECHOS(";");
@@ -90,7 +91,7 @@ identifier	[A-z][A-z0-9]*
 }
 \>	{
 	ECHOS(") {");
-	BEGIN INITIAL;
+	BEGIN (do_ignore(current_tag) ? IGNORE : INITIAL);
 }
 \/\>	{
 	ECHOS(";");
@@ -113,4 +114,17 @@ identifier	[A-z][A-z0-9]*
 }
 }
 
+<IGNORE>{
+\<\/{identifier}+\>	{
+	// XXX: if $identifier == yytext
+	BEGIN INITIAL;
+}
+[{|}]	{
+	ECHOC('\\');
+	ECHOC(yytext[0]);
+}
+.|\n	{
+	ECHO;
+}
+}
 %%

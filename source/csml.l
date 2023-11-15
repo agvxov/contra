@@ -50,7 +50,7 @@ bool pop_tag() {
 %option nodefault
 %option noyylineno
 
-%x BODY HEAD HEAD_VALUE SWALLOW STRING COMMENT COMMENT_MULTILINE
+%x BODY HEAD HEAD_VALUE IGNORE STRING COMMENT COMMENT_MULTILINE
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
@@ -72,7 +72,6 @@ identifier	[A-z][A-z0-9]*
 {identifier}{wsnl}*	{
 	ECHO_CANDIDATE;
 	tag_candidate = yytext;
-	//BEGIN SWALLOW;
 }
 \(	{
 	push_tag();
@@ -86,6 +85,9 @@ identifier	[A-z][A-z0-9]*
 \{	{
 	push_tag();
 	ECHOS(("<" + tag_stack.top() + ">").c_str());
+	if (do_ignore(tag_stack.top())) {
+		BEGIN IGNORE;
+	}
 }
 \}	{
 	ECHO_CANDIDATE;
@@ -94,16 +96,6 @@ identifier	[A-z][A-z0-9]*
 }
 .|{wsnl}	{
 	ECHO;
-}
-}
-
-<SWALLOW>{
-{wsnl}	{
-	;
-}
-. {
-	yyless(0);
-	BEGIN BODY;
 }
 }
 
@@ -155,6 +147,20 @@ identifier	[A-z][A-z0-9]*
 	ECHOS(ATTRIBUTE_VALUE_END);
 	yyless(0);
 	BEGIN HEAD;
+}
+.|\n	{
+	ECHO;
+}
+}
+
+<IGNORE>{
+\\[{|}]	{
+	ECHOC(yytext[1]);
+}
+\}	{
+	ECHOS(("</" + tag_stack.top() + ">").c_str());
+	pop_tag();
+	BEGIN BODY;
 }
 .|\n	{
 	ECHO;

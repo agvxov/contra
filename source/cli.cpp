@@ -7,18 +7,19 @@ const char * const version =
 # include "version.inc"
 ;
 
-const char * help_message =
-"?! [options] <file>+\n"
-"    -c        : the input is to be force interpeted as CSML\n"
-"    -x        : the input is to be force interpeted as XML/HTML\n"
-"    -o <file> : specify output file name for the NEXT file\n"
-"    -q <char> : use <char> for quoting (default: \"'\")\n"
-"    -v        : print version and quit\n"
-"    -h        : print help and quit\n"
+const char * const help_message =
+"cwheel [options] <file>+\n"
+"    -c          : the input is to be force interpeted as CSML\n"
+"    -x          : the input is to be force interpeted as XML/HTML\n"
+"    -i <string> : coma separeted list of tags which contents should be ignored\n"
+"    -o <file>   : specify output file name for the NEXT file\n"
+"    -q <char>   : use <char> for quoting (default: \"'\")\n"
+"    -v          : print version and quit\n"
+"    -h          : print help and quit\n"
 ;
 
 signed parse_round1_arguments(int argc, char * * argv){
-	const char * const optstring = "-" "hv" "cxo:q:";
+	const char * const optstring = "-" "hv" "cxi:o:q:";
 
     static struct option long_options[] = {
         {"help", no_argument, 0, 'h'},
