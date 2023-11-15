@@ -5,3 +5,4 @@
 .gdb_history
 contra
 **/node_modules
+*.vsix

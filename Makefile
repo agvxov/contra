@@ -1,4 +1,4 @@
-.PHONY: clean test run
+.PHONY: clean test install uninstall code_install vim_install
 
 ifeq ($(DEBUG), 1)
   LFLAGS   += --debug --trace
@@ -37,6 +37,13 @@ uninstall:
 
 vim_install:
 	cp plugin/contra.vim ~/.vim/plugin/
+
+code_install: code
+	code --install-extension plugin/vscode/*.vsix
+
+code:
+	cd plugin/vscode/; \
+	yarn package
 
 test:
 	bat ${TEST.d}/draft.csml
