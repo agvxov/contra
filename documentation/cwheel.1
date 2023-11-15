@@ -1,0 +1,67 @@
+.TH CWheel 1 "November 2023" "Version 1.0" "CWheel manual"
+
+.SH NAME
+cwheel \- Convert between CSML and XML/HTML.
+
+.SH SYNOPSIS
+.B cwheel
+([\fIOPTIONS\fR] \fIFILES\fR)+
+
+.SH DESCRIPTION
+The CWheel utility converts so called the "C Style Markup Language" to HTML/XML and back.
+The primary aim is to maximize both editability and readability by dynamizing the markup representation.
+
+.SH OPTIONS
+.IP \-h, \-\-help
+Print help and quit.
+
+.IP \-v, \-\-version
+Print version and quit.
+
+.IP \-c
+Force the interpretation of input as CSML.
+This applies to ALL input files following the option.
+
+.IP \-x
+Force the interpretation of input as conventional markup.
+This applies to ALL input files following the option.
+
+.IP \-q <char>
+Specify character to quote with.
+Currently this is only relevant when CSML tag heads are translated:
+
+	div (class: myclass) -> <div class='myclass'>
+.br
+	                                   A       A
+.br
+	                                   |       |
+.br
+	                quotes ------------+-------+
+
+.IP \-o <file>
+Specify output file corresponding for the NEXT input.
+
+.IP \-i <string>
+Specify a whitespace sensitive, colon separated list of tags's content should be ignored.
+For example, if the contents of a "script" tag were to be parsed
+it could completelly break the tag stack.
+This option is for avoiding such situations.
+
+If a list member's name start with a '$' it's interpreted as a "set".
+Sets are predefined lists.
+
+The currently available lists are:
+
+	$html  - style:script
+
+.SH EXAMPLES
+.B cwheel -c -q '$html:myTag' -o draft.html draft.csml
+
+.SH SEE ALSO
+cwheel(5).
+
+.SH AUTHOR
+AGVXOV - agvxov@gmail.com.
+
+.SH BUGS
+None known.

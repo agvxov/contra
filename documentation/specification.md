@@ -27,7 +27,7 @@ void exaple() {
 
 So,
 CSML is indended to be a temporary representation of other markup languages
-for the duration of their céltudatos^HU editing.
+for the duration of their directed editing.
 In practice,
 the developer would open a -say HTML- file,
 find the relevant section to modify,
@@ -71,7 +71,7 @@ A missing _head_ signals that there are no attributes to be translated.
 Any text may be a valid __attribute__.
 _Attributes_ can be given _values_ by placing a colon (':') after them.
 
-The __value__ is parsed until the first non-escaped vessző^HU (',')
+The __value__ is parsed until the first non-escaped comma (',')
 or until the end of the _head_ (closing ')').
 
 The __body__ is everything enclosed by curly braces ("{}").
@@ -92,7 +92,7 @@ Note, that they are not requred to be always escaped,
 but are highly advised.
 
 #### Comments
-CSML supports C99 style comments,
+CSML supports C99 comments,
 both single and multi line.
 That is:
 ```C
@@ -144,13 +144,4 @@ html {
 are different sides of the same coin.
 
 
-## Cli
-```
-    cwheel [options] <file>+
-        -c        : the input is to be force interpeted as CSML
-        -x        : the input is to be force interpeted as XML/HTML
-        -o <file> : specify output file name for the NEXT file
-        -q <char> : use <char> for quoting (default: "'")
-        -v        : print version and quit
-        -h        : print help and quit
-```
+See the man pages for further documentation.
