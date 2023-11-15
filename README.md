@@ -43,5 +43,10 @@ you could run:
 $ make vim_install
 ```
 #### Visual Studio Code
-
-    // TODO
+The VS Code extension is written in TypeScript,
+so it has to be compiled too.
+This will require a million node modules.
+You are advised to run:
+```
+$ make code_install
+```
