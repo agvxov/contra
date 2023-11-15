@@ -58,16 +58,18 @@ char * output_name_from_input_name(const char * const input, const char * const 
     return r;
 }
 
+static
 inline
 void try_fopen(FILE * &file, const char * const path, const char * const mode) {
 	file = fopen(path, mode);
 	if (!file) {
 		fprintf(stderr, "Error opening file '%s'.\n", path);
 		fflush(stderr);
-		exit(4);
+		exit(IO_ERROR);
 	} 
 }
 
+static
 void yylex(FILE * &yyin, FILE * &yyout, int (*yylex_)(void)) {
 	/* --- Preparation --- */
 	if (output) {
@@ -91,13 +93,13 @@ void yylex(FILE * &yyin, FILE * &yyout, int (*yylex_)(void)) {
 }
 
 signed main(int argc, char * * argv) {
-	switch (parse_round1_arguments(argc - 1, argv + 1)) {
-		case 1: {
-		} return 0;
-		case 2: {
-		} return 1;
-		default: {
-		} break;
+	{
+		const int b = parse_round1_arguments(argc - 1, argv + 1);
+		switch (b) {
+			case 0: break;
+			case EXIT_EARLY_SUCCESS: exit(EXIT_SUCCESS);
+			default: exit(b);
+		}
 	}
 	
 	for (int n = 1; n < argc; n++) {
@@ -146,5 +148,5 @@ signed main(int argc, char * * argv) {
 		}
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
