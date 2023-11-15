@@ -88,6 +88,8 @@ List of escaped special characters:
     + \,
     + \:
     + \;
+    + \<
+    + \>
 Note, that they are not requred to be always escaped,
 but are highly advised.
 
