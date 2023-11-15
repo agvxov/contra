@@ -43,7 +43,7 @@ function cycle() {
   }
 
   function executeCWheel() {
-    const cwheelCommand = `cwheel ${forceFlag} -o ${outputFileName} ${currentFile}`;
+    const cwheelCommand = `cwheel -i '$html' ${forceFlag} -o ${outputFileName} ${currentFile}`;
 
     exec(cwheelCommand, (error, stdout, stderr) => {
       if (error) {
