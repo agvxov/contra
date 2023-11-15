@@ -7,8 +7,13 @@
 #include <string>
 #include <map>
 
-#include "cli.h"
-#include "exit_values.h"
+// uint32_t a(3084);
+// std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv1;
+// std::string u8str = conv1.to_bytes(a);
+// std::cout << "UTF-8 conversion produced " << u8str.size() << " bytes:\n";
+
+#include "cli.hpp"
+#include "exit_values.hpp"
 
 #define DECLARE_LEXER(x)       \
 	extern FILE * x ## in;     \

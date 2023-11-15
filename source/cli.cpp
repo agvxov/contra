@@ -1,6 +1,6 @@
-#include "cli.h"
+#include "cli.hpp"
 
-#include "exit_values.h"
+#include "exit_values.hpp"
 
 #include <getopt.h>
 #include <stdio.h>

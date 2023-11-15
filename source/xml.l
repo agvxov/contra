@@ -1,5 +1,5 @@
 %{
-#include "scanner.h"
+#include "scanner.hpp"
 
 #include <stdio.h>
 
