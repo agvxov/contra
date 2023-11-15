@@ -125,11 +125,11 @@ identifier	[A-z][A-z0-9]*
 
 <HEAD>{
 \){wsnl}*\{	{
-	ECHOS(">");
+	ECHOC('>');
 	BEGIN BODY;
 }
 :{wsnl}*	{
-	ECHOS("=");
+	ECHOC('=');
 	ECHOS(ATTRIBUTE_VALUE_START);
 	BEGIN HEAD_VALUE;
 }

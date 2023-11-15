@@ -53,7 +53,7 @@ identifier	[A-z][A-z0-9]*
 
 <TAG_START>{
 \/{identifier}+{wsnl}*\>	{
-	ECHOS("}");
+	ECHOC('}');
 	BEGIN INITIAL;
 }
 {identifier}+	{
@@ -69,7 +69,7 @@ identifier	[A-z][A-z0-9]*
 	BEGIN (do_ignore(current_tag) ? IGNORE : INITIAL);
 }
 \/\>	{
-	ECHOS(";");
+	ECHOC(';');
 	BEGIN INITIAL;
 }
 {wsnl}	{
@@ -77,7 +77,7 @@ identifier	[A-z][A-z0-9]*
 }
 .	{
 	yyless(0);
-	ECHOS("(");
+	ECHOC('(');
 	BEGIN TAG;
 }
 }
@@ -94,7 +94,7 @@ identifier	[A-z][A-z0-9]*
 	BEGIN (do_ignore(current_tag) ? IGNORE : INITIAL);
 }
 \/\>	{
-	ECHOS(";");
+	ECHOC(';');
 	BEGIN INITIAL;
 }
 .|\n	{
@@ -117,6 +117,7 @@ identifier	[A-z][A-z0-9]*
 <IGNORE>{
 \<\/{identifier}+\>	{
 	// XXX: if $identifier == yytext
+	ECHOC('}');
 	BEGIN INITIAL;
 }
 [{|}]	{
