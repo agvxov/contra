@@ -10,7 +10,7 @@ const char * const version =
 ;
 
 const char * const help_message =
-"cwheel [options] <file>+\n"
+"contra [options] <file>+\n"
 "    -c          : the input is to be force interpeted as CSML\n"
 "    -x          : the input is to be force interpeted as XML/HTML\n"
 "    -i <string> : colon separeted list of tags which contents should be ignored\n"

@@ -34,18 +34,18 @@ function cycle() {
       }
 
       forceFlag = '-c';
-      executeCWheel();
+      executeContra();
     });
   } else {
     outputFileName = path.join(path.dirname(currentFile), `${basename}.csml`);
     forceFlag = '-x';
-    executeCWheel();
+    executeContra();
   }
 
-  function executeCWheel() {
-    const cwheelCommand = `cwheel -i '$html' ${forceFlag} -o ${outputFileName} ${currentFile}`;
+  function executeContra() {
+    const contraCommand = `contra -i '$html' ${forceFlag} -o ${outputFileName} ${currentFile}`;
 
-    exec(cwheelCommand, (error, stdout, stderr) => {
+    exec(contraCommand, (error, stdout, stderr) => {
       if (error) {
         vscode.window.showErrorMessage(`Error executing command: ${error.message}`);
         return;
@@ -63,9 +63,9 @@ function cycle() {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(vscode.commands.registerCommand('cwheel.cycle', cycle));
+  context.subscriptions.push(vscode.commands.registerCommand('contra.cycle', cycle));
 
-  context.subscriptions.push(vscode.commands.registerCommand('cwheel.cycleKeybinding', () => {
+  context.subscriptions.push(vscode.commands.registerCommand('contra.cycleKeybinding', () => {
     cycle();
   }));
 }

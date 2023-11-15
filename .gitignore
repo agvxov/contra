@@ -3,5 +3,5 @@
 *.o
 *.yy.*
 .gdb_history
-cwheel
+contra
 **/node_modules

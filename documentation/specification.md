@@ -1,5 +1,5 @@
-# Cwheel specification
-> The CWheel utility converts so called the "C Style Markup Language" to HTML/XML and back.
+# Contra specification
+> The Contra utility converts so called the "C Style Markup Language" to HTML/XML and back.
 > The primary aim is to maximize both editability and readability by dynamizing the markup representation.
 
 ## C Style Markup Language
@@ -109,7 +109,7 @@ This includes whitespace too.
 
 
 ## Translation
-CWheel translates both ways in a single step,
+Contra translates both ways in a single step,
 from top to bottom,
 perserving formatting.
 

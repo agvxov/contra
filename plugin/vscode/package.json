@@ -1,6 +1,6 @@
 {
-  "name": "cwheel",
-  "displayName": "cwheel",
+  "name": "contra",
+  "displayName": "Contra",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -14,7 +14,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "cwheel.cycle",
+        "command": "contra.cycle",
         "title": "Cycle"
       }
     ]

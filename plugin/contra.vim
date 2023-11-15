@@ -1,4 +1,4 @@
-function! CWheel()
+function! Contra()
 	let saved_cursor = getpos(".")
 
 	let current_file = expand('%')
@@ -23,7 +23,7 @@ function! CWheel()
 		let force_flag = ' -x '
 	endif
 
-	let command = 'cwheel -i ' . shellescape('$html') . ' ' . force_flag . ' -o ' . shellescape(output_file) . ' ' . shellescape(current_file)
+	let command = 'contra -i ' . shellescape('$html') . ' ' . force_flag . ' -o ' . shellescape(output_file) . ' ' . shellescape(current_file)
 	let output =  system(command, v:true)
 
 	if v:shell_error
@@ -37,7 +37,7 @@ function! CWheel()
 	redraw!
 endfunction
 
-command! -nargs=0 CWheel call CWheel()
+command! -nargs=0 Contra call Contra()
 
-noremap <F10> :CWheel<CR>
+noremap <F10> :Contra<CR>
 

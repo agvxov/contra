@@ -8,7 +8,7 @@ else
   CXXFLAGS += -O3 -fno-stack-protector -fno-exceptions -fno-rtti
 endif
 
-OUT := cwheel
+OUT := contra
 
 SOURCE.d  := source/
 OBJECT.d  := object/
