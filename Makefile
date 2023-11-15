@@ -35,6 +35,9 @@ install:
 uninstall:
 	${RM} ${INSTALL.d}/${OUT}
 
+vim_install:
+	cp plugin/contra.vim ~/.vim/plugin/
+
 test:
 	bat ${TEST.d}/draft.csml
 	./${OUT} -c ${TEST.d}/draft.csml
