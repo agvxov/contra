@@ -1,5 +1,7 @@
 #include "cli.h"
 
+#include "exit_values.h"
+
 #include <getopt.h>
 #include <stdio.h>
 
@@ -32,12 +34,12 @@ signed parse_round1_arguments(int argc, char * * argv){
         switch (opt) {
             case 'h': {
 				fputs(help_message, stdout);
-			} return 1;
+			} return EXIT_EARLY_SUCCESS;
             case 'v': {
 				fputs(version, stdout);
-			} return 1;
+			} return EXIT_EARLY_SUCCESS;
             case '?': {
-			} return 2;
+			} return UNKNOWN_OPTION;
 			default: {
 			} break;
         }
