@@ -8,6 +8,8 @@
 
 std::stack<std::string> tag_stack;
 std::string tag_candidate = "";
+static int ignore_count = 1;	// number of '{' / '}'s to be placed around the current ignored block
+static int ignore_i = 1; // number of '}'s so far
 
 static
 void _ECHO_CANDIDATE(){
@@ -38,6 +40,11 @@ bool push_tag() {
 }
 
 bool pop_tag() {
+	if (tag_stack.empty()) {
+		exit(3);
+		return false;
+
+	}
 	tag_stack.pop();
 	tag_candidate = "";
 
@@ -50,7 +57,10 @@ bool pop_tag() {
 %option nodefault
 %option noyylineno
 
-%x BODY HEAD HEAD_VALUE IGNORE STRING COMMENT COMMENT_MULTILINE
+%x BODY HEAD HEAD_VALUE
+%x COMMENT COMMENT_MULTILINE
+%x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
+%x STRING
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
@@ -86,7 +96,7 @@ identifier	[A-z][A-z0-9]*
 	push_tag();
 	ECHOS(("<" + tag_stack.top() + ">").c_str());
 	if (do_ignore(tag_stack.top())) {
-		BEGIN IGNORE;
+		BEGIN IGNORE_COUNT_START;
 	}
 }
 \}	{
@@ -153,14 +163,49 @@ identifier	[A-z][A-z0-9]*
 }
 }
 
+<IGNORE_COUNT_START>{
+\{	{
+	++ignore_count;
+}
+.|\n	{
+	ECHO;
+	BEGIN IGNORE;
+}
+}
+
+<IGNORE_COUNT_END>{
+\}	{
+	if (++ignore_i >= ignore_count) {
+		ignore_i = 0;
+		ignore_count = 1;
+
+		ECHOS(("</" + tag_stack.top() + ">").c_str());
+		pop_tag();
+		BEGIN BODY;
+	}
+}
+.|\n	{
+	while (ignore_i--) {
+		ECHOC('}');
+	}
+	ignore_i = 1;
+	ECHO;
+	BEGIN IGNORE;
+}
+}
+
 <IGNORE>{
 \\[{|}]	{
 	ECHOC(yytext[1]);
 }
 \}	{
-	ECHOS(("</" + tag_stack.top() + ">").c_str());
-	pop_tag();
-	BEGIN BODY;
+	if (ignore_count != 1) {
+		BEGIN IGNORE_COUNT_END;
+	} else {
+		ECHOS(("</" + tag_stack.top() + ">").c_str());
+		pop_tag();
+		BEGIN BODY;
+	}
 }
 .|\n	{
 	ECHO;

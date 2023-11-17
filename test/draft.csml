@@ -1,11 +1,11 @@
 // DOCTYPE HTML 
 html {
 	head {
-		style {
-			div \{
+		style {{
+			div {
 				color: red;
-			\}
-		}
+			}
+		}}
 	}
 	body {
 		hr;
