@@ -7,8 +7,6 @@ bool is_comment_multiline = false;
 unsigned long long comment_begining;
 std::string current_tag;
 long ignore_start;
-static int ignore_count = 1;
-static int ignore_i = 1;
 
 unsigned long long cursor_position = 0;
 #define YY_USER_ACTION cursor_position += yyleng;

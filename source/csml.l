@@ -8,8 +8,6 @@
 
 std::stack<std::string> tag_stack;
 std::string tag_candidate = "";
-static int ignore_count = 1;	// number of '{' / '}'s to be placed around the current ignored block
-static int ignore_i = 1; // number of '}'s so far
 
 static
 void _ECHO_CANDIDATE(){

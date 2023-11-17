@@ -24,6 +24,8 @@ DECLARE_LEXER(csml);
 DECLARE_LEXER(xml);
 
 std::vector<std::string> ignore_list;
+int ignore_count = 1;
+int ignore_i = 1;
 
 const char DEFAULT_QUOTE = '\'';
 char quote = DEFAULT_QUOTE;
