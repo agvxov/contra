@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "global.hpp"
+
 bool is_comment_multiline = false;
 unsigned long long comment_begining;
 std::string current_tag;
@@ -133,13 +135,20 @@ identifier	[A-z][A-z0-9]*
 
 <IGNORE_SEEK>{
 \<\/{identifier}+\>	{
-	// XXX: if $identifier == yytext
-	for (int i = 0; i < ignore_count; i++) {
-		ECHOC('{');
+	char * dup;
+	dup = strdup(yytext);
+	trim(dup);
+	if (!strcmp(dup, current_tag.c_str())) {
+		for (int i = -1; i < ignore_count; i++) {
+			ECHOC('{');
+		}
+		fseek(yyin, ignore_start, SEEK_SET);
+		YY_FLUSH_BUFFER;
+		BEGIN IGNORE;
+	} else {
+		ECHO;
 	}
-	fseek(yyin, ignore_start, SEEK_SET);
-	YY_FLUSH_BUFFER;
-	BEGIN IGNORE;
+	free(dup);
 }
 \{	{
 	BEGIN IGNORE_COUNT_START;
@@ -175,12 +184,19 @@ identifier	[A-z][A-z0-9]*
 
 <IGNORE>{
 \<\/{identifier}+\>	{
-	// XXX: if $identifier == yytext
-	for (int i = -1; i < ignore_count; i++) {
-		ECHOC('}');
+	char * dup;
+	dup = strdup(yytext);
+	trim(dup);
+	if (!strcmp(dup, current_tag.c_str())) {
+		for (int i = -1; i < ignore_count; i++) {
+			ECHOC('}');
+		}
+		ignore_count = 1;
+		BEGIN INITIAL;
+	} else {
+		ECHO;
 	}
-	ignore_count = 1;
-	BEGIN INITIAL;
+	free(dup);
 }
 	/*
 [{|}]	{

@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <stack>
 #include <string>
-#include <boost/algorithm/string/trim.hpp>
+
+#include "global.hpp"
 
 std::stack<std::string> tag_stack;
 std::string tag_candidate = "";
@@ -30,7 +31,7 @@ bool push_tag() {
 		return false;
 	}
 
-	boost::trim(tag_candidate);
+	trim(tag_candidate);
 	tag_stack.push(tag_candidate);
 	tag_candidate = "";
 

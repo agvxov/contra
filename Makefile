@@ -15,7 +15,7 @@ OBJECT.d  := object/
 TEST.d    := test/
 INSTALL.d := /bin/
 
-SOURCE := main.cpp xml.cpp csml.cpp cli.cpp
+SOURCE := main.cpp xml.cpp csml.cpp cli.cpp global.cpp
 OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT := ${OBJECT:.cpp=.o}
 OBJECT := ${OBJECT:.c=.o}
