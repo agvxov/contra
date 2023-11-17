@@ -4,7 +4,10 @@
 #include <string>
 #include <algorithm>
 
-#define ECHOS(s) fwrite(s, strlen(s), sizeof(char), yyout)
+#define ECHOS(s) {                               \
+	const char * const  ss = s;                  \
+	fwrite(ss, strlen(ss), sizeof(char), yyout); \
+} while (0)
 #define ECHOC(c) fputc(c, yyout)
 
 extern std::vector<std::string> ignore_list;

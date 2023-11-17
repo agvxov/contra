@@ -103,6 +103,16 @@ identifier	[A-z][A-z0-9]*
 	ECHOS(("</" + tag_stack.top() + ">").c_str());
 	pop_tag();
 }
+\<	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
+	ECHOS("&lt;");
+}
+\>	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
+	ECHOS("&gt;");
+}
 .|{wsnl}	{
 	ECHO;
 }
@@ -213,13 +223,7 @@ identifier	[A-z][A-z0-9]*
 
 <*>{
 \\[(){},:;]	{
-	ECHOC(yytext[0]);
-}
-\\<	{
-	ECHOS("&lt;");
-}
-\\>	{
-	ECHOS("&gt;");
+	ECHOC(yytext[1]);
 }
 }
 

@@ -10,7 +10,7 @@ html {
 	body {
 		hr;
 		div (class: myclass) {
-			lorem ipsum
+			lorem > ipsum
 		}
 	}
 }

@@ -7,11 +7,6 @@
 #include <string>
 #include <map>
 
-// uint32_t a(3084);
-// std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv1;
-// std::string u8str = conv1.to_bytes(a);
-// std::cout << "UTF-8 conversion produced " << u8str.size() << " bytes:\n";
-
 #include "cli.hpp"
 #include "exit_values.hpp"
 

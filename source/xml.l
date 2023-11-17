@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "global.hpp"
+#include "html_special.hpp"
 
 bool is_comment_multiline = false;
 unsigned long long comment_begining;
@@ -36,6 +37,12 @@ identifier	[A-z][A-z0-9]*
 	comment_begining = cursor_position;
 	ECHOS("//");
 	BEGIN COMMENT;
+}
+&[A-z]+;	{
+	ECHOS(html_special_to_utf8(html_special_table_lookup(yytext)));
+}
+&[0-9]+;	{
+	ECHOS(html_special_to_utf8(yytext));
 }
 .|\n	{
 	ECHO;
