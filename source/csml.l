@@ -118,12 +118,6 @@ identifier	[A-z][A-z0-9]*
 }
 }
 
-<COMMENT,COMMENT_MULTILINE>{
-.*	{
-	ECHO;
-}
-}
-
 <COMMENT>{
 \n	{
 	ECHOS(COMMENT_END);
@@ -137,7 +131,13 @@ identifier	[A-z][A-z0-9]*
 	ECHOS(COMMENT_END);
 	BEGIN BODY;
 }
-.|\n	{
+\n	{
+	ECHO;
+}
+}
+
+<COMMENT,COMMENT_MULTILINE>{
+.	{
 	ECHO;
 }
 }

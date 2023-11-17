@@ -1,6 +1,9 @@
 // DOCTYPE HTML 
 html {
 	head {
+		/* for some reason,
+		   i feel like commenting styles
+		*/
 		style {{
 			div {
 				color: red;
