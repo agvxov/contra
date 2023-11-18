@@ -10,6 +10,7 @@
 #include "global.hpp"
 
 std::stack<std::string> tag_stack;
+
 static std::string tag_candidate = "";
 
 static

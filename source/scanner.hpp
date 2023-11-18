@@ -22,8 +22,10 @@ bool do_ignore(const std::string &current_tag) {
 } 
 
 extern int ignore_count;	// number of '{' / '}'s to be placed around the current ignored block
-extern int ignore_i; // number of '}'s so far
+extern int ignore_i; 		// number of '}'s so far
+
 extern std::string buffer;
+
 extern char quote;
 
 #define SCANNER_H
