@@ -30,16 +30,16 @@ ${OBJECT.d}/%.o: ${SOURCE.d}/%.cpp
 ${OUT}: ${OBJECT}
 	${LINK.cpp} -o $@ ${OBJECT} ${LDLIBS}
 
-install:
+install: ${OUT}
 	cp ${OUT} ${INSTALL.d}/${OUT}
 
 uninstall:
 	${RM} ${INSTALL.d}/${OUT}
 
-vim_install:
+vim_install: install
 	cp plugin/contra.vim ~/.vim/plugin/
 
-code_install: code
+code_install: install code
 	code --install-extension plugin/vscode/*.vsix
 
 code:
