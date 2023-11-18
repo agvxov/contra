@@ -5,6 +5,7 @@
 #include <stack>
 #include <string>
 
+#include "exit_values.hpp"
 #include "html_special.hpp"
 #include "global.hpp"
 
@@ -29,30 +30,24 @@ static const char ATTRIBUTE_VALUE_END[]   = "'";
 static unsigned short current_unicode_size;
 
 static
-bool push_tag() {
+void push_tag() {
 	if (tag_candidate == "") {
-		exit(3);
-		return false;
+		exit(TAG_NOT_NAMED);
 	}
 
 	trim(tag_candidate);
 	tag_stack.push(tag_candidate);
 	tag_candidate = "";
-
-	return true;
 }
 
 static
-bool pop_tag() {
+void pop_tag() {
 	if (tag_stack.empty()) {
-		exit(3);
-		return false;
+		exit(TAG_NOT_FOUND);
 
 	}
 	tag_stack.pop();
 	tag_candidate = "";
-
-	return true;
 }
 
 
