@@ -5,11 +5,14 @@
 #include <libgen.h>
 #include <vector>
 #include <string>
+#include <stack>
 #include <map>
 
 #include "cli.hpp"
 #include "scanner.hpp"
 #include "exit_values.hpp"
+
+extern std::stack<std::string> tag_stack;
 
 #define DECLARE_LEXER(x)       \
 	extern FILE * x ## in;     \
@@ -149,6 +152,9 @@ signed main(int argc, char * * argv) {
 			switch (input_type) {
 				case input_type_t::CSML: {
 					yylex(csmlin, csmlout, csmllex);
+					if (not tag_stack.empty()) {
+						exit(POPULATED_STACK);
+					}
 				} break;
 				case input_type_t::XML: {
 					yylex(xmlin, xmlout, xmllex);

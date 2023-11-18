@@ -8,7 +8,7 @@
 #include "html_special.hpp"
 #include "global.hpp"
 
-static std::stack<std::string> tag_stack;
+std::stack<std::string> tag_stack;
 static std::string tag_candidate = "";
 
 static
