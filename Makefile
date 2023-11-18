@@ -4,6 +4,7 @@ ifeq ($(DEBUG), 1)
   LFLAGS   += --debug --trace
   CXXFLAGS += -Wall -Wextra -Wpedantic 
   CXXFLAGS += -DDEBUG -O0 -ggdb -pg -fno-inline	
+  .PHONY: ${OUT}
 else
   CXXFLAGS += -O3 -fno-stack-protector -fno-exceptions -fno-rtti
 endif
@@ -15,7 +16,7 @@ OBJECT.d  := object/
 TEST.d    := test/
 INSTALL.d := /bin/
 
-SOURCE := main.cpp xml.cpp csml.cpp cli.cpp global.cpp
+SOURCE := main.cpp xml.cpp csml.cpp cli.cpp global.cpp html_special.cpp
 OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT := ${OBJECT:.cpp=.o}
 OBJECT := ${OBJECT:.c=.o}

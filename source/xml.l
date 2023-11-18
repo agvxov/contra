@@ -6,8 +6,7 @@
 #include "global.hpp"
 #include "html_special.hpp"
 
-bool is_comment_multiline = false;
-unsigned long long comment_begining;
+bool is_comment_multiline;
 std::string current_tag;
 long ignore_start;
 
@@ -34,8 +33,9 @@ identifier	[A-z][A-z0-9]*
 	BEGIN TAG_START;
 }
 \<\!--	{
-	comment_begining = cursor_position;
-	ECHOS("//");
+	is_comment_multiline = false;
+	buffer = std::string("");
+	BUFFER("//");
 	BEGIN COMMENT;
 }
 &[A-z]+;	{
@@ -51,18 +51,18 @@ identifier	[A-z][A-z0-9]*
 
 <COMMENT>{
 .	{
-	ECHO;
+	BUFFER(yytext);
 }
 \n	{
+	BUFFER(yytext);
 	is_comment_multiline = true;
 }
 --\>	{
 	if (is_comment_multiline) {
-		auto buffer = ftell(yyin);
-		fseek(yyin, comment_begining+1, SEEK_SET);
-		fputc('*', yyin);
-		fseek(yyin, buffer, SEEK_SET);
+		buffer[1] = '*';
+		buffer   += "*/";
 	}
+	ECHOS(buffer.c_str());
 	BEGIN INITIAL;
 }
 }
@@ -146,7 +146,7 @@ identifier	[A-z][A-z0-9]*
 	dup = strdup(yytext);
 	trim(dup);
 	if (!strcmp(dup, current_tag.c_str())) {
-		for (int i = -1; i < ignore_count; i++) {
+		for (int i = 0; i < ignore_count; i++) {
 			ECHOC('{');
 		}
 		fseek(yyin, ignore_start, SEEK_SET);
@@ -160,7 +160,7 @@ identifier	[A-z][A-z0-9]*
 \{	{
 	BEGIN IGNORE_COUNT_START;
 }
-\{	{
+\}	{
 	BEGIN IGNORE_COUNT_END;
 }
 .|\n	{

@@ -5,10 +5,11 @@
 #include <stack>
 #include <string>
 
+#include "html_special.hpp"
 #include "global.hpp"
 
-std::stack<std::string> tag_stack;
-std::string tag_candidate = "";
+static std::stack<std::string> tag_stack;
+static std::string tag_candidate = "";
 
 static
 void _ECHO_CANDIDATE(){
@@ -25,6 +26,9 @@ static const char COMMENT_END[]   = "-->";
 static const char ATTRIBUTE_VALUE_START[] = "'";
 static const char ATTRIBUTE_VALUE_END[]   = "'";
 
+static unsigned short current_unicode_size;
+
+static
 bool push_tag() {
 	if (tag_candidate == "") {
 		exit(3);
@@ -38,6 +42,7 @@ bool push_tag() {
 	return true;
 }
 
+static
 bool pop_tag() {
 	if (tag_stack.empty()) {
 		exit(3);
@@ -50,6 +55,7 @@ bool pop_tag() {
 	return true;
 }
 
+
 %}
 
 %option noyywrap
@@ -60,10 +66,12 @@ bool pop_tag() {
 %x COMMENT COMMENT_MULTILINE
 %x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
 %x STRING
+%s UNICODE
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
 identifier	[A-z][A-z0-9]*
+unicode		[\300-\364]
 
 %%
 
@@ -87,6 +95,11 @@ identifier	[A-z][A-z0-9]*
 	ECHOS(("<" + tag_stack.top() + " ").c_str());
 	BEGIN HEAD;
 }
+&#?{identifier};	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
+	ECHO;
+}
 ;	{
 	ECHOS(("<" + tag_candidate + "/>").c_str());
 	tag_candidate = "";
@@ -95,6 +108,7 @@ identifier	[A-z][A-z0-9]*
 	push_tag();
 	ECHOS(("<" + tag_stack.top() + ">").c_str());
 	if (do_ignore(tag_stack.top())) {
+		buffer = std::string("");
 		BEGIN IGNORE_COUNT_START;
 	}
 }
@@ -112,6 +126,19 @@ identifier	[A-z][A-z0-9]*
 	ECHO_CANDIDATE;
 	tag_candidate = "";
 	ECHOS("&gt;");
+}
+{unicode}	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
+
+	const char mask = 0b100000000;
+	const char &header = yytext[0];
+	current_unicode_size = 2;
+	for (int i = 2; (mask >> i) & header; i++) {
+		++current_unicode_size;
+	}
+	yyless(0);
+	BEGIN UNICODE;
 }
 .|{wsnl}	{
 	ECHO;
@@ -177,7 +204,7 @@ identifier	[A-z][A-z0-9]*
 	++ignore_count;
 }
 .|\n	{
-	ECHO;
+	BUFFER(yytext);
 	BEGIN IGNORE;
 }
 }
@@ -188,6 +215,7 @@ identifier	[A-z][A-z0-9]*
 		ignore_i = 0;
 		ignore_count = 1;
 
+		ECHOS(buffer.c_str());
 		ECHOS(("</" + tag_stack.top() + ">").c_str());
 		pop_tag();
 		BEGIN BODY;
@@ -195,10 +223,10 @@ identifier	[A-z][A-z0-9]*
 }
 .|\n	{
 	while (ignore_i--) {
-		ECHOC('}');
+		BUFFER('}');
 	}
 	ignore_i = 1;
-	ECHO;
+	BUFFER(yytext);
 	BEGIN IGNORE;
 }
 }
@@ -211,13 +239,26 @@ identifier	[A-z][A-z0-9]*
 	if (ignore_count != 1) {
 		BEGIN IGNORE_COUNT_END;
 	} else {
+		ECHOS(buffer.c_str());
 		ECHOS(("</" + tag_stack.top() + ">").c_str());
 		pop_tag();
 		BEGIN BODY;
 	}
 }
 .|\n	{
-	ECHO;
+	BUFFER(yytext);
+}
+}
+
+<UNICODE>{
+(.|\n){4}	{
+	static char current_unicode[5];
+	memcpy(current_unicode, yytext, 5);
+	current_unicode[current_unicode_size] = '\0';
+
+	yyless(4 - current_unicode_size);
+	ECHOS(utf8_to_html_special(current_unicode));
+	BEGIN BODY;
 }
 }
 

@@ -20,6 +20,7 @@ const char * const help_message =
 "    -h          : print help and quit\n"
 ;
 
+extern "C"
 signed parse_round1_arguments(int argc, char * * argv){
 	const char * const optstring = "-" "hv" "cxi:o:q:";
 

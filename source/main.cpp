@@ -8,6 +8,7 @@
 #include <map>
 
 #include "cli.hpp"
+#include "scanner.hpp"
 #include "exit_values.hpp"
 
 #define DECLARE_LEXER(x)       \
@@ -17,10 +18,6 @@
 
 DECLARE_LEXER(csml);
 DECLARE_LEXER(xml);
-
-std::vector<std::string> ignore_list;
-int ignore_count = 1;
-int ignore_i = 1;
 
 const char DEFAULT_QUOTE = '\'';
 char quote = DEFAULT_QUOTE;
