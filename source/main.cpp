@@ -22,8 +22,6 @@ extern std::stack<std::string> tag_stack;
 DECLARE_LEXER(csml);
 DECLARE_LEXER(xml);
 
-const char DEFAULT_QUOTE = '\'';
-char quote = DEFAULT_QUOTE;
 char * output = NULL;
 char * input  = NULL;
 const char * const csml_extension = ".csml";

@@ -24,8 +24,8 @@ void _ECHO_CANDIDATE(){
 static const char COMMENT_START[] = "<!--";
 static const char COMMENT_END[]   = "-->";
 
-static const char ATTRIBUTE_VALUE_START[] = "'";
-static const char ATTRIBUTE_VALUE_END[]   = "'";
+const char DEFAULT_QUOTE = '\'';
+char quote = DEFAULT_QUOTE;
 
 static unsigned short current_unicode_size;
 
@@ -60,7 +60,6 @@ void pop_tag() {
 %x BODY HEAD HEAD_VALUE
 %x COMMENT COMMENT_MULTILINE
 %x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
-%x STRING
 %s UNICODE
 
 ws			[ \t\r\v\f]
@@ -171,7 +170,7 @@ unicode		[\300-\364]
 }
 :{wsnl}*	{
 	ECHOC('=');
-	ECHOS(ATTRIBUTE_VALUE_START);
+	ECHOC(quote);
 	BEGIN HEAD_VALUE;
 }
 .|\n	{
@@ -181,11 +180,11 @@ unicode		[\300-\364]
 
 <HEAD_VALUE>{
 ,	{
-	ECHOS(ATTRIBUTE_VALUE_END);
+	ECHOC(quote);
 	BEGIN HEAD;
 }
 \)	{
-	ECHOS(ATTRIBUTE_VALUE_END);
+	ECHOC(quote);
 	yyless(0);
 	BEGIN HEAD;
 }
