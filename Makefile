@@ -3,8 +3,8 @@
 ifeq ($(DEBUG), 1)
   LFLAGS   += --debug --trace
   CXXFLAGS += -Wall -Wextra -Wpedantic 
-  CXXFLAGS += -DDEBUG -O0 -ggdb -pg -fno-inline	
-  .PHONY: ${OUT}
+  CXXFLAGS += -DDEBUG -O0 -ggdb -fno-inline	
+  WRAP     := valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all 
 else
   CXXFLAGS += -O3 -fno-stack-protector -fno-exceptions -fno-rtti
 endif
@@ -48,9 +48,9 @@ code:
 
 test:
 	bat ${TEST.d}/draft.csml
-	./${OUT} -i '$$html' -c ${TEST.d}/draft.csml
+	${WRAP} ./${OUT} -i '$$html' -c ${TEST.d}/draft.csml
 	bat ${TEST.d}/draft.html
-	./${OUT} -i '$$html' -x ${TEST.d}/draft.html
+	${WRAP} ./${OUT} -i '$$html' -x ${TEST.d}/draft.html
 
 clean:
 	-rm ${OUT}
