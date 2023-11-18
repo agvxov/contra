@@ -126,7 +126,7 @@ unicode		[\300-\364]
 	ECHO_CANDIDATE;
 	tag_candidate = "";
 
-	const char mask = 0b100000000;
+	const char mask = (char)0b100000000;
 	const char &header = yytext[0];
 	current_unicode_size = 2;
 	for (int i = 2; (mask >> i) & header; i++) {
