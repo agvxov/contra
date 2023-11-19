@@ -23,7 +23,8 @@ function! Contra()
 		let force_flag = ' -x '
 	endif
 
-	let command = 'contra -i ' . shellescape('$html') . ' ' . force_flag . ' -o ' . shellescape(output_file) . ' ' . shellescape(current_file)
+	let command = 'contra -s ' . shellescape('html') . ' ' . force_flag . ' -o ' . shellescape(output_file) . ' ' . shellescape(current_file)
+	echo command
 	let output =  system(command, v:true)
 
 	if v:shell_error
