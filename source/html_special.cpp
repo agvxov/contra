@@ -34,7 +34,6 @@ extern "C"
 const char * utf8_to_html_special(const char * const utf) {
 	for (size_t i = 0; i < html_special_table_size; i++) {
 		if (!strcmp(utf, html_special_table[i][2])) {
-			fflush(stdout);
 			return html_special_table[i][0];
 		}
 	}
