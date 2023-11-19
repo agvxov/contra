@@ -11,6 +11,7 @@ bool is_comment_multiline;
 std::string current_tag;
 unsigned xml_tag_stack = 0;
 bool is_asymmetric;
+char current_string_quote;
 
 unsigned long long cursor_position = 0;
 #define YY_USER_ACTION cursor_position += yyleng;
@@ -138,6 +139,7 @@ identifier	[A-z!][A-z0-9]*
 
 <TAG>{
 \"|\'	{
+	current_string_quote = yytext[0];
 	BEGIN STRING;
 }
 =	{
@@ -183,8 +185,12 @@ identifier	[A-z!][A-z0-9]*
 
 <STRING>{
 [^\\]\"|\'	{
-	ECHOC(yytext[0]);
-	BEGIN TAG;
+	if (current_string_quote == yytext[1]) {
+		ECHOC(yytext[0]);
+		BEGIN TAG;
+	} else {
+		ECHO;
+	}
 }
 ,	{
 	ECHOS("\\,");
