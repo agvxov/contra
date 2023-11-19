@@ -211,6 +211,9 @@ identifier	[A-z][A-z0-9]*
 [^\\](\"|\')	{
 	if (current_string_quote == yytext[1]) {
 		ECHOC(yytext[0]);
+		if (state_buffer == DECLARATION) {
+			ECHOC(yytext[1]);
+		}
 		BEGIN state_buffer;
 	} else {
 		ECHO;
