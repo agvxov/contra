@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Complex Hello, World!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2em;
+        }
+
+        #output {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #777;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1><?php echo "Hello, PHP!"; ?></h1>
+        <p id="output">Welcome to the complex world of programming.</p>
+        <button onclick="changeOutput()">Click me!</button>
+    </div>
+
+    <script>
+        function changeOutput() {
+            document.getElementById("output").innerHTML = "You clicked the button! The world just got more complex.";
+        }
+    </script>
+</body>
+</html>
