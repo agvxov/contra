@@ -43,7 +43,7 @@ function cycle() {
   }
 
   function executeContra() {
-    const contraCommand = `contra -i '$html' ${forceFlag} -o ${outputFileName} ${currentFile}`;
+    const contraCommand = `contra -s 'html' ${forceFlag} -o ${outputFileName} ${currentFile}`;
 
     exec(contraCommand, (error, stdout, stderr) => {
       if (error) {
