@@ -5,10 +5,12 @@
 
 #include "global.hpp"
 #include "html_special.hpp"
+#include "exit_values.hpp"
 
 bool is_comment_multiline;
 std::string current_tag;
-long ignore_start;
+unsigned xml_tag_stack = 0;
+bool is_asymmetric;
 
 unsigned long long cursor_position = 0;
 #define YY_USER_ACTION cursor_position += yyleng;
@@ -19,13 +21,14 @@ unsigned long long cursor_position = 0;
 %option noyylineno
 
 %x TAG_START TAG_MAYBE TAG
+%x TAG_ASYMETRIC_SPECIAL
 %x COMMENT
 %x STRING
-%x IGNORE IGNORE_SEEK IGNORE_COUNT_START IGNORE_COUNT_END
+%x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
-identifier	[A-z][A-z0-9]*
+identifier	[A-z!][A-z0-9]*
 
 %%
 <INITIAL>{
@@ -69,6 +72,7 @@ identifier	[A-z][A-z0-9]*
 
 <TAG_START>{
 \/{identifier}+{wsnl}*\>	{
+	--xml_tag_stack;
 	ECHOC('}');
 	BEGIN INITIAL;
 }
@@ -77,14 +81,28 @@ identifier	[A-z][A-z0-9]*
 	current_tag = yytext;
 	BEGIN TAG_MAYBE;
 }
+.	{
+	is_asymmetric = std::find(asymmetric_special_list.begin(),
+								asymmetric_special_list.end(),
+								yytext)
+					!= asymmetric_special_list.end();
+	if (is_asymmetric) {
+		ECHOC('<');
+		ECHO;
+		BEGIN TAG_ASYMETRIC_SPECIAL;
+	} else {
+		exit(UNRECOGNIZED_TAG);
+	}
+}
 }
 
 <TAG_MAYBE>{
 \>	{
+	++xml_tag_stack;
 	ECHOS(" {");
 	if (do_ignore(current_tag)) {
-		ignore_start = cursor_position;
-		BEGIN IGNORE_SEEK;
+		buffer = std::string("");
+		BEGIN IGNORE;
 	} else {
 		BEGIN INITIAL;
 	}
@@ -111,17 +129,37 @@ identifier	[A-z][A-z0-9]*
 	ECHOS(": ");
 }
 \>	{
+	++xml_tag_stack;
 	ECHOS(") {");
 	if (do_ignore(current_tag)) {
-		ignore_start = cursor_position;
-		BEGIN IGNORE_SEEK;
+		buffer = std::string("");
+		BEGIN IGNORE;
 	} else {
 		BEGIN INITIAL;
 	}
 }
 \/\>	{
-	ECHOC(';');
+	ECHOS(");");
 	BEGIN INITIAL;
+}
+{ws}	{
+	ECHOS(", ");
+}
+.|\n	{
+	ECHO;
+}
+}
+
+<TAG_ASYMETRIC_SPECIAL>{
+.\>	{
+	ECHO;
+	is_asymmetric = std::find(asymmetric_special_list.begin(),
+								asymmetric_special_list.end(),
+								(std::string("") + yytext[0]))
+					!= asymmetric_special_list.end();
+	if (is_asymmetric) {
+		BEGIN INITIAL;
+	}
 }
 .|\n	{
 	ECHO;
@@ -130,6 +168,7 @@ identifier	[A-z][A-z0-9]*
 
 <STRING>{
 [^\\]\"|\'	{
+	ECHOC(yytext[0]);
 	BEGIN TAG;
 }
 ,	{
@@ -140,79 +179,64 @@ identifier	[A-z][A-z0-9]*
 }
 }
 
-<IGNORE_SEEK>{
+<IGNORE>{
 \<\/{identifier}+\>	{
+	--xml_tag_stack;
 	char * dup;
 	dup = strdup(yytext);
 	trim(dup);
-	if (!strcmp(dup, current_tag.c_str())) {
+	const int eq = !strcmp(dup, current_tag.c_str());
+	free(dup);
+	if (eq) {
 		for (int i = 0; i < ignore_count; i++) {
 			ECHOC('{');
 		}
-		fseek(yyin, ignore_start, SEEK_SET);
-		YY_FLUSH_BUFFER;
-		BEGIN IGNORE;
-	} else {
-		ECHO;
-	}
-	free(dup);
-}
-\{	{
-	BEGIN IGNORE_COUNT_START;
-}
-\}	{
-	BEGIN IGNORE_COUNT_END;
-}
-.|\n	{
-}
-}
-
-<IGNORE_COUNT_START>{
-\{	{
-	++ignore_i;
-}
-}
-
-<IGNORE_COUNT_END>{
-\}	{
-	++ignore_i;
-}
-}
-
-<IGNORE_COUNT_START,IGNORE_COUNT_END>{
-.|\n	{
-	if (ignore_i > ignore_count) {
-		ignore_count = ignore_i;
-	}
-	ignore_i = 0;
-	BEGIN IGNORE_SEEK;
-}
-}
-
-<IGNORE>{
-\<\/{identifier}+\>	{
-	char * dup;
-	dup = strdup(yytext);
-	trim(dup);
-	if (!strcmp(dup, current_tag.c_str())) {
+		ECHOS(buffer.c_str());
 		for (int i = -1; i < ignore_count; i++) {
 			ECHOC('}');
 		}
 		ignore_count = 1;
 		BEGIN INITIAL;
 	} else {
+		BUFFER(yytext);
 		ECHO;
 	}
-	free(dup);
 }
-	/*
-[{|}]	{
-	ECHOC('\\');
-	ECHOC(yytext[0]);
+\{	{
+	BUFFER(yytext);
+	BEGIN IGNORE_COUNT_START;
 }
-	*/
+\}	{
+	BUFFER(yytext);
+	BEGIN IGNORE_COUNT_END;
+}
 .|\n	{
-	ECHO;
+	BUFFER(yytext);
+}
+}
+
+<IGNORE_COUNT_START>{
+\{	{
+	BUFFER(yytext);
+	++ignore_i;
+}
+}
+
+<IGNORE_COUNT_END>{
+\}	{
+	BUFFER(yytext);
+	++ignore_i;
+}
+}
+
+<IGNORE_COUNT_START,IGNORE_COUNT_END>{
+.|\n	{
+	BUFFER(yytext);
+	if (ignore_i > ignore_count) {
+		ignore_count = ignore_i;
+	}
+	ignore_i = 0;
+	BEGIN IGNORE;
 }
 }
 %%

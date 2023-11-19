@@ -16,13 +16,13 @@ OBJECT.d  := object/
 TEST.d    := test/
 INSTALL.d := /bin/
 
-SOURCE := main.cpp xml.cpp csml.cpp cli.cpp global.cpp html_special.cpp
+SOURCE := main.cpp xml.cpp csml.cpp cli.cpp html_special.cpp
 OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT := ${OBJECT:.cpp=.o}
 OBJECT := ${OBJECT:.c=.o}
 
 %.cpp: %.l
-	${LEX} --prefix=$(basename $(notdir $<)) ${LFLAGS} -o $@ $<
+	${LEX} --prefix=$(basename $(notdir $<))_ ${LFLAGS} -o $@ $<
 
 ${OBJECT.d}/%.o: ${SOURCE.d}/%.cpp
 	${COMPILE.cpp} -o $@ $<
@@ -36,10 +36,10 @@ install: ${OUT}
 uninstall:
 	${RM} ${INSTALL.d}/${OUT}
 
-vim_install: install
+vim_install:
 	cp plugin/contra.vim ~/.vim/plugin/
 
-code_install: install code
+code_install: code
 	code --install-extension plugin/vscode/*.vsix
 
 code:
@@ -48,9 +48,11 @@ code:
 
 test:
 	bat ${TEST.d}/draft.csml
-	${WRAP} ./${OUT} -i '$$html' -c ${TEST.d}/draft.csml
-	bat ${TEST.d}/draft.html
-	${WRAP} ./${OUT} -i '$$html' -x ${TEST.d}/draft.html
+	${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/draft.csml
+	bat --paging=never ${TEST.d}/draft.html
+	${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html
+	bat --paging=never ${TEST.d}/complex.html
+	${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/complex.html
 
 clean:
 	-rm ${OUT}
