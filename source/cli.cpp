@@ -151,13 +151,13 @@ signed parse_round2_arguments(int argc, char * * argv) {
 				case input_type_t::CSML: {
 					yylex(csml_in, csml_out, csml_lex);
 					if (not csml_tag_stack.empty()) {
-						exit(POPULATED_STACK);
+						exit(POLUTED_STACK);
 					}
 				} break;
 				case input_type_t::XML: {
 					yylex(xml_in, xml_out, xml_lex);
 					if(xml_tag_stack) {
-						exit(POPULATED_STACK);
+						exit(POLUTED_STACK);
 					}
 				} break;
 				default: {

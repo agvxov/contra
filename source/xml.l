@@ -14,6 +14,21 @@ bool is_asymmetric;
 
 unsigned long long cursor_position = 0;
 #define YY_USER_ACTION cursor_position += yyleng;
+
+inline
+static
+void xml_tag_stack_push() {
+	++xml_tag_stack;
+}
+
+inline
+static
+void xml_tag_stack_pop() {
+	if (!xml_tag_stack) {
+		exit(POLUTED_STACK);
+	}
+	--xml_tag_stack;
+}
 %}
 
 %option noyywrap
@@ -72,7 +87,7 @@ identifier	[A-z!][A-z0-9]*
 
 <TAG_START>{
 \/{identifier}+{wsnl}*\>	{
-	--xml_tag_stack;
+	xml_tag_stack_pop();
 	ECHOC('}');
 	BEGIN INITIAL;
 }
@@ -98,7 +113,7 @@ identifier	[A-z!][A-z0-9]*
 
 <TAG_MAYBE>{
 \>	{
-	++xml_tag_stack;
+	xml_tag_stack_push();
 	ECHOS(" {");
 	if (do_ignore(current_tag)) {
 		buffer = std::string("");
@@ -129,7 +144,7 @@ identifier	[A-z!][A-z0-9]*
 	ECHOS(": ");
 }
 \>	{
-	++xml_tag_stack;
+	xml_tag_stack_push();
 	ECHOS(") {");
 	if (do_ignore(current_tag)) {
 		buffer = std::string("");
@@ -181,7 +196,7 @@ identifier	[A-z!][A-z0-9]*
 
 <IGNORE>{
 \<\/{identifier}+\>	{
-	--xml_tag_stack;
+	xml_tag_stack_pop();
 	char * dup;
 	dup = strdup(yytext);
 	trim(dup);
