@@ -21,7 +21,10 @@ const char * html_special_to_utf8(const char * const special) {
 	static std::string r;
 	r = std::string(special);
 	trim(r);
-	uint32_t i(std::stoi(r));	// XXX: with no-exception this is suicide
+
+	uint32_t i;
+	sscanf(r.c_str(), "%d", &i);
+
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv1;
 	r = conv1.to_bytes(i);
 	return r.c_str();
