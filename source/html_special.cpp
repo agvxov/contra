@@ -23,7 +23,7 @@ const char * html_special_to_utf8(const char * const special) {
 	trim(r);
 
 	uint32_t i;
-	sscanf(r.c_str(), "%d", &i);
+	sscanf(r.c_str(), "%u", &i);
 
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv1;
 	r = conv1.to_bytes(i);
