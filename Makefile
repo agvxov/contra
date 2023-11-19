@@ -51,6 +51,8 @@ test:
 	${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/draft.csml
 	bat --paging=never ${TEST.d}/draft.html
 	${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html
+	bat --paging=never ${TEST.d}/complex.csml
+	${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/complex.csml
 	bat --paging=never ${TEST.d}/complex.html
 	${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/complex.html
 

@@ -194,6 +194,8 @@ signed parse_sets(char * const list) {
 			ignore_list.emplace_back("style");
 			ignore_list.emplace_back("script");
 			asymmetric_special_list.emplace_back("?");
+		} else if (!strcmp(data, "xml")) {
+			asymmetric_special_list.emplace_back("?");
 		} else {
 			return UNKNOWN_SET;
 		}

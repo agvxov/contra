@@ -13,6 +13,8 @@ unsigned xml_tag_stack = 0;
 bool is_asymmetric;
 char current_string_quote;
 
+int state_buffer;
+
 unsigned long long cursor_position = 0;
 #define YY_USER_ACTION cursor_position += yyleng;
 
@@ -39,12 +41,13 @@ void xml_tag_stack_pop() {
 %x TAG_START TAG_MAYBE TAG
 %x TAG_ASYMETRIC_SPECIAL
 %x COMMENT
+%x DECLARATION
 %x STRING
 %x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
-identifier	[A-z!][A-z0-9]*
+identifier	[A-z][A-z0-9]*
 
 %%
 <INITIAL>{
@@ -56,6 +59,10 @@ identifier	[A-z!][A-z0-9]*
 	buffer = std::string("");
 	BUFFER("//");
 	BEGIN COMMENT;
+}
+\<\!	{
+	ECHOC('!');
+	BEGIN DECLARATION;
 }
 &[A-z]+;	{
 	ECHOS(html_special_to_utf8(html_special_table_lookup(yytext)));
@@ -83,6 +90,22 @@ identifier	[A-z!][A-z0-9]*
 	}
 	ECHOS(buffer.c_str());
 	BEGIN INITIAL;
+}
+}
+
+<DECLARATION>{
+\>	{
+	ECHOC(';');
+	BEGIN INITIAL;
+}
+\'|\"	{
+	ECHO;
+	current_string_quote = yytext[0];
+	state_buffer = DECLARATION;
+	BEGIN STRING;
+}
+.|\n	{
+	ECHO;
 }
 }
 
@@ -140,6 +163,7 @@ identifier	[A-z!][A-z0-9]*
 <TAG>{
 \"|\'	{
 	current_string_quote = yytext[0];
+	state_buffer = TAG;
 	BEGIN STRING;
 }
 =	{
@@ -184,10 +208,10 @@ identifier	[A-z!][A-z0-9]*
 }
 
 <STRING>{
-[^\\]\"|\'	{
+[^\\](\"|\')	{
 	if (current_string_quote == yytext[1]) {
 		ECHOC(yytext[0]);
-		BEGIN TAG;
+		BEGIN state_buffer;
 	} else {
 		ECHO;
 	}
@@ -202,7 +226,6 @@ identifier	[A-z!][A-z0-9]*
 
 <IGNORE>{
 \<\/{identifier}+\>	{
-	xml_tag_stack_pop();
 	char * dup;
 	dup = strdup(yytext);
 	trim(dup);
@@ -217,6 +240,7 @@ identifier	[A-z!][A-z0-9]*
 			ECHOC('}');
 		}
 		ignore_count = 1;
+		xml_tag_stack_pop();
 		BEGIN INITIAL;
 	} else {
 		BUFFER(yytext);

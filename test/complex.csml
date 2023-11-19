@@ -1,11 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Complex Hello, World!</title>
-    <style>
+!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN
+   "http://www.w3.org/TR/html4/strict.dtd;
+html (lang: en) {
+head {
+    meta (charset: UTF-8);
+    meta (name: viewport, content: width=device-width\, initial-scale=1.0);
+    title {Complex Hello, World!}
+    style {{
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f0f0;
@@ -51,19 +51,19 @@
         button:hover {
             background-color: #45a049;
         }
-    </style>
-</head>
-<body>
-    <div id="container">
-        <h1><?php echo "Hello, PHP!"; ?></h1>
-        <p id="output">Welcome to the complex world of programming.</p>
-        <button onclick="changeOutput()">Click me!</button>
-    </div>
+    }}
+}
+body {
+    div (id: container) {
+        h1 {<?php echo "Hello, PHP!"; ?>}
+        p (id: output) {Welcome to the complex world of programming.}
+        button (onclick: changeOutput()) {Click me!}
+    }
 
-    <script>
+    script {{
         function changeOutput() {
             document.getElementById("output").innerHTML = "You clicked the button! The world just got more complex.";
         }
-    </script>
-</body>
-</html>
+    }}
+}
+}
