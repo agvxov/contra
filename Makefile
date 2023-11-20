@@ -46,7 +46,7 @@ code:
 	cd plugin/vscode/; \
 	yarn package
 
-test:
+test: ${OUT}
 	bat ${TEST.d}/draft.csml
 	${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/draft.csml
 	bat --paging=never ${TEST.d}/draft.html
