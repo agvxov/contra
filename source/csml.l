@@ -61,6 +61,7 @@ void pop_tag() {
 %x BODY HEAD HEAD_VALUE
 %x COMMENT COMMENT_MULTILINE
 %x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
+%s DECLARATION
 %s UNICODE
 
 ws			[ \t\r\v\f]
@@ -112,15 +113,11 @@ unicode		[\300-\364]
 	ECHOS(("</" + csml_tag_stack.top() + ">").c_str());
 	pop_tag();
 }
-\<	{
+\#\!	{
 	ECHO_CANDIDATE;
+	ECHOS("<!");
 	tag_candidate = "";
-	ECHOS("&lt;");
-}
-\>	{
-	ECHO_CANDIDATE;
-	tag_candidate = "";
-	ECHOS("&gt;");
+	BEGIN DECLARATION;
 }
 {unicode}	{
 	ECHO_CANDIDATE;
@@ -134,6 +131,16 @@ unicode		[\300-\364]
 	}
 	yyless(0);
 	BEGIN UNICODE;
+}
+\<	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
+	ECHOS("&lt;");
+}
+\>	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
+	ECHOS("&gt;");
 }
 .|{wsnl}	{
 	ECHO;
@@ -167,6 +174,11 @@ unicode		[\300-\364]
 <HEAD>{
 \){wsnl}*\{	{
 	ECHOC('>');
+	BEGIN BODY;
+}
+\){wsnl}*;	{
+	pop_tag();
+	ECHOS("/>");
 	BEGIN BODY;
 }
 :{wsnl}*	{
@@ -242,6 +254,17 @@ unicode		[\300-\364]
 }
 .|\n	{
 	BUFFER(yytext);
+}
+}
+
+<DECLARATION>{
+[^\\];	{
+	ECHOC(yytext[0]);
+	ECHOC('>');
+	BEGIN BODY;
+}
+.|\n	{
+	ECHO;
 }
 }
 

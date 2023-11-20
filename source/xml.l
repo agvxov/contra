@@ -61,7 +61,7 @@ identifier	[A-z][A-z0-9]*
 	BEGIN COMMENT;
 }
 \<\!	{
-	ECHOC('!');
+	ECHOS("#!");
 	BEGIN DECLARATION;
 }
 &[A-z]+;	{
