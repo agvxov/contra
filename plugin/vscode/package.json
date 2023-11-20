@@ -21,6 +21,14 @@
         "command": "contra.cycle",
         "title": "Cycle"
       }
+    ],
+    "keybindings": [
+        {
+            "command": "contra.cycle",
+            "key": "alt+shift+c",
+            "mac": "alt+shift+c",
+            "when": "editorTextFocus"
+        }
     ]
   },
   "scripts": {
