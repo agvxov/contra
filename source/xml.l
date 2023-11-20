@@ -7,11 +7,11 @@
 #include "html_special.hpp"
 #include "exit_values.hpp"
 
-bool is_comment_multiline;
-std::string current_tag;
 unsigned xml_tag_stack = 0;
-bool is_asymmetric;
-char current_string_quote;
+
+static bool is_comment_multiline;
+static std::string current_tag;
+static char current_string_quote;
 
 int state_buffer;
 
@@ -210,7 +210,16 @@ identifier	[A-z][A-z0-9]*
 <STRING>{
 [^\\](\"|\')	{
 	if (current_string_quote == yytext[1]) {
-		ECHOC(yytext[0]);
+		{
+			// XXX: this is such a hack
+			switch (yytext[0]) {
+				case ',':
+				case '(':
+				case ')':
+				ECHOC('\\');
+			}
+			ECHOC(yytext[0]); 
+		}
 		if (state_buffer == DECLARATION) {
 			ECHOC(yytext[1]);
 		}
@@ -219,8 +228,9 @@ identifier	[A-z][A-z0-9]*
 		ECHO;
 	}
 }
-,	{
-	ECHOS("\\,");
+[,)(]	{
+	ECHOC('\\');
+	ECHOC(yytext[0]);
 }
 .|\n	{
 	ECHO;

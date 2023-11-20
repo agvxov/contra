@@ -21,6 +21,7 @@ void _ECHO_CANDIDATE(){
 }
 
 #define ECHO_CANDIDATE _ECHO_CANDIDATE()
+#define FLUSH_CANDIDATE do { _ECHO_CANDIDATE(); tag_candidate = ""; } while (0)
 
 static const char COMMENT_START[] = "<!--";
 static const char COMMENT_END[]   = "-->";
@@ -61,16 +62,17 @@ void pop_tag() {
 %x BODY HEAD HEAD_VALUE
 %x COMMENT COMMENT_MULTILINE
 %x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
+%x TAG_ASYMETRIC_SPECIAL
 %s DECLARATION
 %s UNICODE
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
+nwsnl		[^ \t\r\v\f\n]
 identifier	[A-z][A-z0-9]*
 unicode		[\300-\364]
 
 %%
-
 	BEGIN BODY;
 
 <BODY>{
@@ -92,8 +94,7 @@ unicode		[\300-\364]
 	BEGIN HEAD;
 }
 &#?{identifier};	{
-	ECHO_CANDIDATE;
-	tag_candidate = "";
+	FLUSH_CANDIDATE;
 	ECHO;
 }
 ;	{
@@ -114,14 +115,12 @@ unicode		[\300-\364]
 	pop_tag();
 }
 \#\!	{
-	ECHO_CANDIDATE;
+	FLUSH_CANDIDATE;
 	ECHOS("<!");
-	tag_candidate = "";
 	BEGIN DECLARATION;
 }
 {unicode}	{
-	ECHO_CANDIDATE;
-	tag_candidate = "";
+	FLUSH_CANDIDATE;
 
 	const char mask = (char)0b100000000;
 	const char &header = yytext[0];
@@ -132,17 +131,36 @@ unicode		[\300-\364]
 	yyless(0);
 	BEGIN UNICODE;
 }
+\<{nwsnl}*	{
+	{	// XXX: this is way too expensive
+		const auto filter = [yyleng, yytext](std::string e){
+								return e == std::string(yytext+1).substr(0, e.size());
+							};
+		const auto search_result = std::find_if(asymmetric_special_list.begin(),
+												asymmetric_special_list.end(),
+												filter
+											);
+		is_asymmetric = search_result != asymmetric_special_list.end();
+		if (is_asymmetric) {
+			ECHO;
+			BEGIN TAG_ASYMETRIC_SPECIAL;
+		} else {
+			FLUSH_CANDIDATE;
+			ECHOS("&lt;");
+		}
+	}
+}
 \<	{
-	ECHO_CANDIDATE;
-	tag_candidate = "";
+	FLUSH_CANDIDATE;
 	ECHOS("&lt;");
+
 }
 \>	{
-	ECHO_CANDIDATE;
-	tag_candidate = "";
+	FLUSH_CANDIDATE;
 	ECHOS("&gt;");
 }
 .|{wsnl}	{
+	FLUSH_CANDIDATE;
 	ECHO;
 }
 }
@@ -219,7 +237,7 @@ unicode		[\300-\364]
 <IGNORE_COUNT_END>{
 \}	{
 	if (++ignore_i >= ignore_count) {
-		ignore_i = 0;
+		ignore_i = 1;
 		ignore_count = 1;
 
 		ECHOS(buffer.c_str());
@@ -254,6 +272,22 @@ unicode		[\300-\364]
 }
 .|\n	{
 	BUFFER(yytext);
+}
+}
+
+<TAG_ASYMETRIC_SPECIAL>{
+.\>	{
+	ECHO;
+	is_asymmetric = std::find(asymmetric_special_list.begin(),
+								asymmetric_special_list.end(),
+								(std::string("") + yytext[0]))
+					!= asymmetric_special_list.end();
+	if (is_asymmetric) {
+		BEGIN BODY;
+	}
+}
+.|\n	{
+	ECHO;
 }
 }
 

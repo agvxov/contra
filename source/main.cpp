@@ -13,10 +13,15 @@
 std::vector<std::string> ignore_list;
 std::vector<std::string> asymmetric_special_list;
 
+bool is_asymmetric;
+
 int ignore_count = 1;
 int ignore_i = 1;
 
 std::string buffer;
+
+extern int xml_lex_destroy(void);
+extern int csml_lex_destroy(void);
 
 char * output_name_from_input_name(const char * const input, const char * const extension) {
 	char * input_duplicate = strdup(input);
@@ -77,6 +82,9 @@ signed main(int argc, char * * argv) {
 	}
 
 	parse_round2_arguments(argc - 1, argv + 1);
+
+	xml_lex_destroy();
+	csml_lex_destroy();
 	
 	return EXIT_SUCCESS;
 }

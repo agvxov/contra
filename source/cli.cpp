@@ -8,14 +8,6 @@
 #include "exit_values.hpp"
 #include "scanner.hpp"
 
-#define DECLARE_LEXER(x)           \
-	extern FILE * x ## _in;        \
-	extern FILE * x ## _out;       \
-	extern int    x ## _lex(void); \
-
-DECLARE_LEXER(csml);
-DECLARE_LEXER(xml);
-
 extern std::stack<std::string> csml_tag_stack;
 extern unsigned xml_tag_stack;
 

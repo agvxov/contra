@@ -57,13 +57,13 @@ body {
     div (id: container) {
         h1 {<?php echo "Hello, PHP!"; ?>}
         p (id: output) {Welcome to the complex world of programming.}
-        button (onclick: changeOutput()) {Click me!}
+        button (onclick: changeOutput\(\)) {Click me!}
     }
 
     script {{
         function changeOutput() {
             document.getElementById("output").innerHTML = "You clicked the button! The world just got more complex.";
-        }
+        
     }}
 }
 }
