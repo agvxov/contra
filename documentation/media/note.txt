@@ -1,0 +1,1 @@
+ffmpeg -i demo.mkv -filter_complex "[0:v]setpts=0.5555*PTS[v]" -map "[v]" -c:v libx264 -an demo.out.mkv

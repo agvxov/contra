@@ -9,7 +9,29 @@ See `documentation/*` for the exact details or follow this README for a quick-st
 
 ### Example
 
-    // TODO
+![demo](documentation/media/demo.GIF)
+
+If someone is used to writing \*script,
+this should be more comfortable to type out:
+
+```C
+p {
+    foo br;
+    bar br;
+}
+```
+
+And press `Alt + Shift + C` (in VScode),
+then to type out this with:
+
+```HTML
+<p>
+    foo <br/>
+    bar <br/>
+</p>
+```
+
+Yet, the two are equivalent using Contra.
 
 ### Installantion
 For any of the below plugins to work,
