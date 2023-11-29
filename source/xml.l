@@ -70,6 +70,10 @@ identifier	[A-z][A-z0-9]*
 &[0-9]+;	{
 	ECHOS(html_special_to_utf8(yytext));
 }
+[(){};]	{
+	ECHOC('\\');
+	ECHOC(yytext[0]);
+}
 .|\n	{
 	ECHO;
 }

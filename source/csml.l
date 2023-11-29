@@ -69,7 +69,7 @@ void pop_tag() {
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
 nwsnl		[^ \t\r\v\f\n]
-identifier	[A-z][A-z0-9]*
+identifier	[A-Za-z][A-Za-z0-9]*
 unicode		[\300-\364]
 
 %%
@@ -149,11 +149,6 @@ unicode		[\300-\364]
 			ECHOS("&lt;");
 		}
 	}
-}
-\<	{
-	FLUSH_CANDIDATE;
-	ECHOS("&lt;");
-
 }
 \>	{
 	FLUSH_CANDIDATE;
@@ -316,6 +311,8 @@ unicode		[\300-\364]
 
 <*>{
 \\[(){},:;]	{
+	ECHO_CANDIDATE;
+	tag_candidate = "";
 	ECHOC(yytext[1]);
 }
 }
