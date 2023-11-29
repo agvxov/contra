@@ -63,7 +63,7 @@ You might have to create the directory yourself.
 Or,
 assuming your setup actually matches with the above,
 you could run:
-```
+```Bash
 $ make vim_install
 ```
 
@@ -72,6 +72,6 @@ The VS Code extension is written in TypeScript,
 so it has to be compiled too.
 This will require a million node modules.
 You are advised to run:
-```
+```Bash
 $ make code_install
 ```
