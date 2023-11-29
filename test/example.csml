@@ -1,0 +1,10 @@
+html {
+    title (id: t) {title}
+    hr;
+    div {
+        lorem ipsum
+    }
+    script {{
+        console.log("heyo");
+    }}
+}
