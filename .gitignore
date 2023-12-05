@@ -6,3 +6,4 @@
 contra
 **/node_modules
 *.vsix
+*.[1-9]

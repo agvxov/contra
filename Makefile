@@ -59,3 +59,8 @@ test: ${OUT}
 clean:
 	-rm ${OUT}
 	-rm ${OBJECT}
+
+docs:
+	for i in documentation/*.md; do \
+		kramdown-man "$$i" -o documentation/manual/$$(basename -s .md $$i) ; \
+	done
