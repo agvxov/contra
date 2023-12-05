@@ -1,8 +1,4 @@
-# Contra specification
-> The Contra utility converts so called the "C Style Markup Language" to HTML/XML and back.
-> The primary aim is to maximize both editability and readability by dynamizing the markup representation.
-
-## C Style Markup Language
+# C Style Markup Language
 The C Style Markup Language -CSML for short- is a markup language
 that can be 1 to 1 translated into traditional markup languages such as XML or HTML.
 It's syntax -as the name suggests- is engineered to be similar to
@@ -12,13 +8,16 @@ It also happens to closely resemble Groovy's advanced templating language.
 
 The rational behind it's creation is the realizations that:
  1. languages which have giant blocks (say thousands of lines) tend to be more readable if the block closing token explicitly states the block type being closed.
+
 ```ADA
 procedure exaple is
 begin
     ;
 end
 ```
+
  2. languges with implicit block closing contain less redundant text and as a result, are easier to edit
+
 ```C
 void exaple() {
     ;
@@ -38,9 +37,9 @@ then convert it back
 Or alternatively one could rapidly type out a webpage in CSML
 and seemlessly translate it in the end.
 
-### Syntax
+## Syntax
 
-#### Tags
+### Tags
 ```
     <tag> [(<head>)] {<body>}
 ```
@@ -77,7 +76,7 @@ or until the end of the _head_ (closing ')').
 The __body__ is everything enclosed by curly braces ("{}").
 It may contain more _tags_ or _comments_.
 
-#### Escaping
+### Escaping
 Any special character may be escaped by prepending it with a backslash ('\').
 This will prevent it from being parsed as a significant token to the syntax.
 List of escaped special characters:
@@ -93,7 +92,7 @@ List of escaped special characters:
 Note, that they are not requred to be always escaped,
 but are highly advised.
 
-#### Comments
+### Comments
 CSML supports C99 comments,
 both single and multi line.
 That is:
@@ -104,46 +103,7 @@ That is:
 line*/
 ```
 
-#### Echoing
+### Echoing
 Anything not holding special meaning (tags, heads, comments) is considered regular text,
 which is significant.
 This includes whitespace too.
-
-
-## Translation
-Contra translates both ways in a single step,
-from top to bottom,
-perserving formatting.
-
-Example:
-```
-<!-- DOCTYPE HTML -->
-<html>
-	<head>
-	</head>
-	<body>
-		<hr/>
-		<div class='myclass'>
-			lorem ipsum
-		</div>
-	</body>
-</html>
-```
-and
-```
-// DOCTYPE HTML 
-html {
-	head {
-	}
-	body {
-		hr;
-		div (class: myclass) {
-			lorem ipsum
-		}
-	}
-}
-```
-are different sides of the same coin.
-
-
-See the man pages for further documentation.
