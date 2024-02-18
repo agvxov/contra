@@ -1,6 +1,6 @@
 .PHONY: clean test install uninstall code_install vim_install
 
-ifeq ($(DEBUG), 1)
+ifeq (${DEBUG}, 1)
   LFLAGS   += --debug --trace
   CXXFLAGS += -Wall -Wextra -Wpedantic 
   CXXFLAGS += -DDEBUG -O0 -ggdb -fno-inline	
