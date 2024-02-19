@@ -60,6 +60,10 @@ body {
         button (onclick: changeOutput\(\)) {Click me!}
     }
 
+    hr;
+
+    div {}
+
     script {{
         function changeOutput() {
             document.getElementById("output").innerHTML = "You clicked the button! The world just got more complex.";
