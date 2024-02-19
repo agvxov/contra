@@ -26,7 +26,7 @@ const char * const help_message =
 "    -s <string> : colon separeted list of option sets\n"
 "    -S <string> : colon separeted list of special asymetric tags starters\n"
 "    -i <string> : colon separeted list of tags which contents should be ignored\n"
-"    -o <file>   : specify output file name for the NEXT file\n"
+"    -o <file>   : specify output file name for the NEXT input file\n"
 "    -q <char>   : use <char> for quoting (default: \"'\")\n"
 "    -v          : print version and quit\n"
 "    -h          : print help and quit\n"

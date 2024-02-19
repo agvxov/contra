@@ -74,7 +74,7 @@ void trim(std::string &s) {
 }
 
 signed main(int argc, char * * argv) {
-	const int b = parse_round1_arguments(argc - 1, argv + 1);
+	const int b = parse_round1_arguments(argc, argv);
 	switch (b) {
 		case 0: break;
 		case EXIT_EARLY_SUCCESS: exit(EXIT_SUCCESS);

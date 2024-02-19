@@ -1,5 +1,7 @@
 #include "html_special.hpp"
 
+#include <stdint.h>
+
 const size_t html_special_table_size =
 	sizeof(html_special_table)
 		/
