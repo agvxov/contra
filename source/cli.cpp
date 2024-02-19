@@ -25,7 +25,6 @@ const char * const help_message =
 "    -x          : the input is to be force interpeted as XML/HTML\n"
 "    -s <string> : colon separeted list of option sets\n"
 "    -S <string> : colon separeted list of special asymetric tags starters\n"
-"    -i <string> : colon separeted list of tags which contents should be ignored\n"
 "    -o <file>   : specify output file name for the NEXT input file\n"
 "    -q <char>   : use <char> for quoting (default: \"'\")\n"
 "    -v          : print version and quit\n"
@@ -113,9 +112,6 @@ signed parse_round2_arguments(int argc, char * * argv) {
 		} else if (!strcmp(argv[n], "-q")) {
 			++n;
 			quote = argv[n][0];
-		} else if (!strcmp(argv[n], "-i")) {
-			++n;
-			parse_colon_list(argv[n], ignore_list);
 		} else if (!strcmp(argv[n], "-s")) {
 			++n;
 			const int err = parse_sets(argv[n]);
@@ -183,8 +179,6 @@ signed parse_sets(char * const list) {
 	int i = 0;
 	do {
 		if (!strcmp(data, "html")) {
-			ignore_list.emplace_back("style");
-			ignore_list.emplace_back("script");
 			asymmetric_special_list.emplace_back("?");
 		} else if (!strcmp(data, "xml")) {
 			asymmetric_special_list.emplace_back("?");

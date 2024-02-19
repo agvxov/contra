@@ -143,12 +143,7 @@ identifier	[A-z][A-z0-9]*
 \>	{
 	xml_tag_stack_push();
 	ECHOS(" {");
-	if (do_ignore(current_tag)) {
-		buffer = std::string("");
-		BEGIN IGNORE;
-	} else {
-		BEGIN INITIAL;
-	}
+	BEGIN IGNORE;
 }
 \/\>	{
 	ECHOC(';');
@@ -176,12 +171,7 @@ identifier	[A-z][A-z0-9]*
 \>	{
 	xml_tag_stack_push();
 	ECHOS(") {");
-	if (do_ignore(current_tag)) {
-		buffer = std::string("");
-		BEGIN IGNORE;
-	} else {
-		BEGIN INITIAL;
-	}
+	BEGIN IGNORE;
 }
 \/\>	{
 	ECHOS(");");

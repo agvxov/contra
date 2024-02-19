@@ -104,10 +104,7 @@ unicode		[\300-\364]
 \{	{
 	push_tag();
 	ECHOS(("<" + csml_tag_stack.top() + ">").c_str());
-	if (do_ignore(csml_tag_stack.top())) {
-		buffer = std::string("");
-		BEGIN IGNORE_COUNT_START;
-	}
+	BEGIN IGNORE_COUNT_START;
 }
 \}	{
 	ECHO_CANDIDATE;
@@ -224,8 +221,13 @@ unicode		[\300-\364]
 	++ignore_count;
 }
 .|\n	{
-	BUFFER(yytext);
-	BEGIN IGNORE;
+	if (ignore_count == 1) {
+		yyless(0);
+		BEGIN BODY;
+	} else {
+		BUFFER(yytext);
+		BEGIN IGNORE;
+	}
 }
 }
 
