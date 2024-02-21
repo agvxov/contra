@@ -15,10 +15,10 @@ std::vector<std::string> asymmetric_special_list;
 
 bool is_asymmetric;
 
-int ignore_count = 1;
-int ignore_i = 1;
-
 std::string buffer;
+std::string tag_candidate;
+
+std::stack<std::string> tag_stack;
 
 extern int xml_lex_destroy(void);
 extern int csml_lex_destroy(void);

@@ -7,4 +7,5 @@ enum {
 	TAG_NOT_NAMED    = 5,
 	TAG_NOT_FOUND    = 6,
 	UNRECOGNIZED_TAG = 7,
+	ASSIMETRY        = 8,
 };

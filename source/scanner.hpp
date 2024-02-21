@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <stack>
 
 #define DECLARE_LEXER(x)                   \
 	extern FILE * x ## _in;                \
@@ -26,19 +27,15 @@ extern bool is_asymmetric;
 
 extern char quote;
 
-/* number of '{' & '}'s to be placed around the current ignored block
- */
-extern int ignore_count;
-
-/* number of '}'s so far
- */
-extern int ignore_i;
-
 /* used for saving sections whichs starting projection
  *  cannot be determined before reading the while
  *  (e.g. comments (single- or multiline?))
  */
 extern std::string buffer;
+
+extern std::stack<std::string> tag_stack;
+
+extern std::string tag_candidate;
 
 #define SCANNER_H
 #endif

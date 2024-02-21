@@ -7,10 +7,7 @@
 #include "html_special.hpp"
 #include "exit_values.hpp"
 
-unsigned xml_tag_stack = 0;
-
 static bool is_comment_multiline;
-static std::string current_tag;
 static char current_string_quote;
 
 int state_buffer;
@@ -18,20 +15,13 @@ int state_buffer;
 unsigned long long cursor_position = 0;
 #define YY_USER_ACTION cursor_position += yyleng;
 
-inline
-static
-void xml_tag_stack_push() {
-	++xml_tag_stack;
-}
+/* number of '{' & '}'s to be placed around the block contents
+ */
+static int extra_brace_count = 0;
 
-inline
-static
-void xml_tag_stack_pop() {
-	if (!xml_tag_stack) {
-		exit(POLUTED_STACK);
-	}
-	--xml_tag_stack;
-}
+/* number of '{' | '}'s so far; used for maximum search, updating extra_brace_count
+ */
+static int extra_brace_i = 0;
 %}
 
 %option noyywrap
@@ -43,7 +33,7 @@ void xml_tag_stack_pop() {
 %x COMMENT
 %x DECLARATION
 %x STRING
-%x IGNORE IGNORE_COUNT_START IGNORE_COUNT_END
+%x BRACE_COUNT_START BRACE_COUNT_END
 
 ws			[ \t\r\v\f]
 wsnl		[ \t\r\v\f\n]
@@ -52,11 +42,15 @@ identifier	[A-z][A-z0-9]*
 %%
 <INITIAL>{
 \<	{
+	ECHOS(buffer.c_str());
+	buffer = "";
 	BEGIN TAG_START;
 }
 \<\!--	{
+	ECHOS(buffer.c_str());
+	buffer = "";
 	is_comment_multiline = false;
-	buffer = std::string("");
+	buffer = "";
 	BUFFER("//");
 	BEGIN COMMENT;
 }
@@ -65,35 +59,71 @@ identifier	[A-z][A-z0-9]*
 	BEGIN DECLARATION;
 }
 &[A-z]+;	{
-	ECHOS(html_special_to_utf8(html_special_table_lookup(yytext)));
+	BUFFER(html_special_to_utf8(html_special_table_lookup(yytext)));
 }
 &[0-9]+;	{
-	ECHOS(html_special_to_utf8(yytext));
+	BUFFER(html_special_to_utf8(yytext));
 }
-[(){};]	{
-	ECHOC('\\');
-	ECHOC(yytext[0]);
+	/*
+	[(){};] {
+		ECHOC('\\');
+		ECHOC(yytext[0]);
+	}
+	*/
+\<\/{wsnl}*{identifier}+{wsnl}*\> {
+	if (tag_stack.empty()) {
+		exit(POLUTED_STACK);
+	}
+
+	char * dup = strdup(yytext);
+	trim(dup);
+	bool eq = (tag_stack.top() == dup);
+	free(dup);
+	if (not eq) {
+		exit(ASSIMETRY);
+	}
+
+	for (int i = 0; i < extra_brace_count; i++) {
+		ECHOC('{');
+	}
+	ECHOS(buffer.c_str());
+	for (int i = -1; i < extra_brace_count; i++) {
+		ECHOC('}');
+	}
+
+	buffer = "";
+	extra_brace_count = 0;
+	tag_stack.pop();
+}
+\{	{
+	BUFFER(yytext);
+	BEGIN BRACE_COUNT_START;
+}
+\}	{
+	BUFFER(yytext);
+	BEGIN BRACE_COUNT_END;
 }
 .|\n	{
-	ECHO;
+	BUFFER(yytext);
 }
 }
 
 <COMMENT>{
+--\>	{
+	if (is_comment_multiline) {
+		buffer[1] = '*';
+		buffer	 += "*/";
+	}
+	ECHOS(buffer.c_str());
+	buffer = "";
+	BEGIN INITIAL;
+}
 .	{
 	BUFFER(yytext);
 }
 \n	{
 	BUFFER(yytext);
 	is_comment_multiline = true;
-}
---\>	{
-	if (is_comment_multiline) {
-		buffer[1] = '*';
-		buffer   += "*/";
-	}
-	ECHOS(buffer.c_str());
-	BEGIN INITIAL;
 }
 }
 
@@ -114,14 +144,9 @@ identifier	[A-z][A-z0-9]*
 }
 
 <TAG_START>{
-\/{identifier}+{wsnl}*\>	{
-	xml_tag_stack_pop();
-	ECHOC('}');
-	BEGIN INITIAL;
-}
 {identifier}+	{
 	ECHO;
-	current_tag = yytext;
+	tag_stack.emplace(yytext);
 	BEGIN TAG_MAYBE;
 }
 .	{
@@ -141,12 +166,12 @@ identifier	[A-z][A-z0-9]*
 
 <TAG_MAYBE>{
 \>	{
-	xml_tag_stack_push();
 	ECHOS(" {");
-	BEGIN IGNORE;
+	BEGIN INITIAL;
 }
 \/\>	{
 	ECHOC(';');
+	tag_stack.pop();
 	BEGIN INITIAL;
 }
 {wsnl}	{
@@ -169,12 +194,12 @@ identifier	[A-z][A-z0-9]*
 	ECHOS(": ");
 }
 \>	{
-	xml_tag_stack_push();
 	ECHOS(") {");
-	BEGIN IGNORE;
+	BEGIN INITIAL;
 }
 \/\>	{
 	ECHOS(");");
+	tag_stack.pop();
 	BEGIN INITIAL;
 }
 {ws}	{
@@ -186,7 +211,7 @@ identifier	[A-z][A-z0-9]*
 }
 
 <TAG_ASYMETRIC_SPECIAL>{
-.\>	{
+.\> {
 	ECHO;
 	is_asymmetric = std::find(asymmetric_special_list.begin(),
 								asymmetric_special_list.end(),
@@ -231,64 +256,26 @@ identifier	[A-z][A-z0-9]*
 }
 }
 
-<IGNORE>{
-\<\/{identifier}+\>	{
-	char * dup;
-	dup = strdup(yytext);
-	trim(dup);
-	const int eq = !strcmp(dup, current_tag.c_str());
-	free(dup);
-	if (eq) {
-		for (int i = 0; i < ignore_count; i++) {
-			ECHOC('{');
-		}
-		ECHOS(buffer.c_str());
-		for (int i = -1; i < ignore_count; i++) {
-			ECHOC('}');
-		}
-		ignore_count = 1;
-		xml_tag_stack_pop();
-		BEGIN INITIAL;
-	} else {
-		BUFFER(yytext);
-		ECHO;
-	}
-}
+<BRACE_COUNT_START>{
 \{	{
-	BUFFER(yytext);
-	BEGIN IGNORE_COUNT_START;
+	++extra_brace_i;
 }
+}
+
+<BRACE_COUNT_END>{
 \}	{
-	BUFFER(yytext);
-	BEGIN IGNORE_COUNT_END;
+	++extra_brace_i;
 }
+}
+
+<BRACE_COUNT_START,BRACE_COUNT_END>{
 .|\n	{
-	BUFFER(yytext);
-}
-}
-
-<IGNORE_COUNT_START>{
-\{	{
-	BUFFER(yytext);
-	++ignore_i;
-}
-}
-
-<IGNORE_COUNT_END>{
-\}	{
-	BUFFER(yytext);
-	++ignore_i;
-}
-}
-
-<IGNORE_COUNT_START,IGNORE_COUNT_END>{
-.|\n	{
-	BUFFER(yytext);
-	if (ignore_i > ignore_count) {
-		ignore_count = ignore_i;
+	yyless(0);
+	if (extra_brace_i > extra_brace_count) {
+		extra_brace_count = extra_brace_i;
 	}
-	ignore_i = 0;
-	BEGIN IGNORE;
+	extra_brace_i = 0;
+	BEGIN INITIAL;
 }
 }
 %%

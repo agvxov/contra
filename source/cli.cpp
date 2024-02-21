@@ -8,8 +8,7 @@
 #include "exit_values.hpp"
 #include "scanner.hpp"
 
-extern std::stack<std::string> csml_tag_stack;
-extern unsigned xml_tag_stack;
+extern std::stack<std::string> tag_stack;
 
 const char * const csml_extension = ".csml";
 
@@ -138,13 +137,13 @@ signed parse_round2_arguments(int argc, char * * argv) {
 			switch (input_type) {
 				case input_type_t::CSML: {
 					yylex(csml_in, csml_out, csml_lex);
-					if (not csml_tag_stack.empty()) {
+					if (not tag_stack.empty()) {
 						exit(POLUTED_STACK);
 					}
 				} break;
 				case input_type_t::XML: {
 					yylex(xml_in, xml_out, xml_lex);
-					if(xml_tag_stack) {
+					if (not tag_stack.empty()) {
 						exit(POLUTED_STACK);
 					}
 				} break;

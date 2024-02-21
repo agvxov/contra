@@ -2,16 +2,20 @@
 #include "scanner.hpp"
 
 #include <stdio.h>
-#include <stack>
 #include <string>
 
 #include "exit_values.hpp"
 #include "html_special.hpp"
 #include "global.hpp"
 
-std::stack<std::string> csml_tag_stack;
+/* number of '}'s to recognize as the end
+ *  of the current ignired block
+ */
+static int ignore_count = 1;
 
-static std::string tag_candidate = "";
+/* number of '}' so far; used for maximum search, updating ignore_count
+ */
+static int ignore_i = 1;
 
 static
 void _ECHO_CANDIDATE(){
@@ -38,17 +42,17 @@ void push_tag() {
 	}
 
 	trim(tag_candidate);
-	csml_tag_stack.push(tag_candidate);
+	tag_stack.push(tag_candidate);
 	tag_candidate = "";
 }
 
 static
 void pop_tag() {
-	if (csml_tag_stack.empty()) {
+	if (tag_stack.empty()) {
 		exit(TAG_NOT_FOUND);
 
 	}
-	csml_tag_stack.pop();
+	tag_stack.pop();
 	tag_candidate = "";
 }
 
@@ -90,7 +94,7 @@ unicode		[\300-\364]
 }
 \(	{
 	push_tag();
-	ECHOS(("<" + csml_tag_stack.top() + " ").c_str());
+	ECHOS(("<" + tag_stack.top() + " ").c_str());
 	BEGIN HEAD;
 }
 &#?{identifier};	{
@@ -103,12 +107,12 @@ unicode		[\300-\364]
 }
 \{	{
 	push_tag();
-	ECHOS(("<" + csml_tag_stack.top() + ">").c_str());
+	ECHOS(("<" + tag_stack.top() + ">").c_str());
 	BEGIN IGNORE_COUNT_START;
 }
 \}	{
 	ECHO_CANDIDATE;
-	ECHOS(("</" + csml_tag_stack.top() + ">").c_str());
+	ECHOS(("</" + tag_stack.top() + ">").c_str());
 	pop_tag();
 }
 \#\!	{
@@ -238,7 +242,7 @@ unicode		[\300-\364]
 		ignore_count = 1;
 
 		ECHOS(buffer.c_str());
-		ECHOS(("</" + csml_tag_stack.top() + ">").c_str());
+		ECHOS(("</" + tag_stack.top() + ">").c_str());
 		pop_tag();
 		BEGIN BODY;
 	}
@@ -262,7 +266,7 @@ unicode		[\300-\364]
 		BEGIN IGNORE_COUNT_END;
 	} else {
 		ECHOS(buffer.c_str());
-		ECHOS(("</" + csml_tag_stack.top() + ">").c_str());
+		ECHOS(("</" + tag_stack.top() + ">").c_str());
 		pop_tag();
 		BEGIN BODY;
 	}
