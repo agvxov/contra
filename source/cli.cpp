@@ -11,6 +11,7 @@
 extern std::stack<std::string> tag_stack;
 
 const char * const csml_extension = ".csml";
+bool did_any_work = false;
 
 static
 const char * const version =
@@ -73,6 +74,11 @@ void yylex(FILE * &yyin, FILE * &yyout, int (*yylex_)(void)) {
 
 // ### global functions ###
 extern "C"
+void usage(void) {
+	fputs(help_message, stdout);
+}
+
+extern "C"
 signed parse_round1_arguments(int argc, char * * argv){
 	const char * const optstring = "-" "hv" "cxs:S:i:o:q:";
 
@@ -86,7 +92,7 @@ signed parse_round1_arguments(int argc, char * * argv){
     while ((opt = getopt_long(argc, argv, optstring, long_options, NULL)) != -1) {
         switch (opt) {
             case 'h': {
-				fputs(help_message, stdout);
+                usage();
 			} return EXIT_EARLY_SUCCESS;
             case 'v': {
 				fputs(version, stdout);
@@ -124,6 +130,7 @@ signed parse_round2_arguments(int argc, char * * argv) {
 			++n;
 			output = argv[n];
 		} else {
+            did_any_work = true;
 			input = argv[n];
 
 			if (input_type == input_type_t::AUTO_DETECT) {

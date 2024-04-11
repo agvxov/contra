@@ -83,6 +83,10 @@ signed main(int argc, char * * argv) {
 
 	parse_round2_arguments(argc - 1, argv + 1);
 
+    if (not did_any_work) {
+        usage();
+    }
+
 	xml_lex_destroy();
 	csml_lex_destroy();
 	

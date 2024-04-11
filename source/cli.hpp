@@ -3,6 +3,12 @@
 #include <vector>
 #include <string>
 
+/* Used for outputting a help message as the default behaviour
+ */
+extern bool did_any_work;
+
+extern "C" void usage(void);
+
 extern "C" signed parse_colon_list(char * const list, std::vector<std::string> destination);
 extern "C" signed parse_sets(char * const list);
 
