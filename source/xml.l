@@ -7,11 +7,10 @@
 #include "html_special.hpp"
 #include "exit_values.hpp"
 
-static bool is_comment_multiline;
+static bool is_multiline_comment;
 static char current_string_quote;
 
 int state_buffer;
-
 
 /* number of '{' & '}'s to be placed around the block contents
  */
@@ -47,8 +46,8 @@ identifier	[A-z][A-z0-9]*
 \<\!--	{
 	ECHOS(buffer.c_str());
 	buffer = "";
-	is_comment_multiline = false;
 	buffer = "";
+	is_multiline_comment = false;
 	BUFFER("//");
 	BEGIN COMMENT;
 }
@@ -108,7 +107,7 @@ identifier	[A-z][A-z0-9]*
 
 <COMMENT>{
 --\>	{
-	if (is_comment_multiline) {
+	if (is_multiline_comment) {
 		buffer[1] = '*';
 		buffer	 += "*/";
 	}
@@ -121,7 +120,7 @@ identifier	[A-z][A-z0-9]*
 }
 \n	{
 	BUFFER(yytext);
-	is_comment_multiline = true;
+	is_multiline_comment = true;
 }
 }
 
