@@ -12,8 +12,6 @@ static char current_string_quote;
 
 int state_buffer;
 
-unsigned long long cursor_position = 0;
-#define YY_USER_ACTION cursor_position += yyleng;
 
 /* number of '{' & '}'s to be placed around the block contents
  */
