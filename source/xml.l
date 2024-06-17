@@ -46,7 +46,6 @@ identifier	[A-z][A-z0-9]*
 \<\!--	{
 	ECHOS(buffer.c_str());
 	buffer = "";
-	buffer = "";
 	is_multiline_comment = false;
 	BUFFER("//");
 	BEGIN COMMENT;
@@ -94,6 +93,7 @@ identifier	[A-z][A-z0-9]*
 }
 \{	{
 	BUFFER(yytext);
+    yyless(0);
 	BEGIN BRACE_COUNT_START;
 }
 \}	{
