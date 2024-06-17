@@ -21,6 +21,8 @@ OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT := ${OBJECT:.cpp=.o}
 OBJECT := ${OBJECT:.c=.o}
 
+DIFF := diff -s -y -t --color=always
+
 %.cpp: %.l
 	${LEX} --prefix=$(basename $(notdir $<))_ ${LFLAGS} -o $@ $<
 
@@ -47,14 +49,14 @@ code:
 	yarn package
 
 test: ${OUT}
-	bat ${TEST.d}/draft.csml
-	${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/draft.csml
-	bat --paging=never ${TEST.d}/draft.html
-	${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html
-	bat --paging=never ${TEST.d}/complex.csml
-	${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/complex.csml
-	bat --paging=never ${TEST.d}/complex.html
-	${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/complex.html
+	${DIFF} <(bat ${TEST.d}/draft.html) <(${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/draft.csml)
+	${DIFF} <(bat ${TEST.d}/draft.csml) <(${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html)
+	#bat --paging=never ${TEST.d}/draft.html
+	#${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html
+	#bat --paging=never ${TEST.d}/complex.csml
+	#${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/complex.csml
+	#bat --paging=never ${TEST.d}/complex.html
+	#${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/complex.html
 
 clean:
 	-rm ${OUT}
