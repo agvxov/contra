@@ -242,6 +242,7 @@ unicode		[\300-\364]
 		ignore_count = 1;
 
 		ECHOS(buffer.c_str());
+		buffer = "";
 		ECHOS(("</" + tag_stack.top() + ">").c_str());
 		pop_tag();
 		BEGIN BODY;
