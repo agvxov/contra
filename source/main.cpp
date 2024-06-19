@@ -10,6 +10,7 @@
 #include "scanner.hpp"
 #include "exit_values.hpp"
 
+// Define declared variables from 'scanner.hpp' here
 std::vector<std::string> ignore_list;
 std::vector<std::string> asymmetric_special_list;
 
@@ -19,9 +20,10 @@ std::string buffer;
 std::string tag_candidate;
 
 std::stack<std::string> tag_stack;
+/* --------------- */
 
-extern int xml_lex_destroy(void);
-extern int csml_lex_destroy(void);
+extern int from_xml_to_csml_lex_destroy(void);
+extern int from_csml_to_xml_lex_destroy(void);
 
 char * output_name_from_input_name(const char * const input, const char * const extension) {
 	char * input_duplicate = strdup(input);
@@ -87,8 +89,8 @@ signed main(int argc, char * * argv) {
         usage();
     }
 
-	xml_lex_destroy();
-	csml_lex_destroy();
+	from_xml_to_csml_lex_destroy();
+	from_csml_to_xml_lex_destroy();
 	
 	return EXIT_SUCCESS;
 }

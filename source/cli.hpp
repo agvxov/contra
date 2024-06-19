@@ -12,7 +12,7 @@ extern "C" void usage(void);
 extern "C" signed parse_colon_list(char * const list, std::vector<std::string> destination);
 extern "C" signed parse_sets(char * const list);
 
-/* Parse arguments with perminant effects (-h)
+/* Parse arguments with global effects (-h)
  * Perform validation.
  */
 extern "C" signed parse_round1_arguments(int argc, char * * argv);

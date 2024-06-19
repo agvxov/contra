@@ -5,14 +5,16 @@
 #include <algorithm>
 #include <stack>
 
+// NOTE: definitions are in 'main.cpp'
+
 #define DECLARE_LEXER(x)                   \
 	extern FILE * x ## _in;                \
 	extern FILE * x ## _out;               \
 	extern int    x ## _lex(void);         \
 	extern int    x ## _lex_destroy(void);
 
-DECLARE_LEXER(csml);
-DECLARE_LEXER(xml);
+DECLARE_LEXER(from_csml_to_xml);
+DECLARE_LEXER(from_xml_to_csml);
 
 #define ECHOS(s) do {                            \
 	const char * const  ss = s;                  \

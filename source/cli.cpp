@@ -143,13 +143,13 @@ signed parse_round2_arguments(int argc, char * * argv) {
 
 			switch (input_type) {
 				case input_type_t::CSML: {
-					yylex(csml_in, csml_out, csml_lex);
+					yylex(from_csml_to_xml_in, from_csml_to_xml_out, from_csml_to_xml_lex);
 					if (not tag_stack.empty()) {
 						exit(POLUTED_STACK);
 					}
 				} break;
 				case input_type_t::XML: {
-					yylex(xml_in, xml_out, xml_lex);
+					yylex(from_xml_to_csml_in, from_xml_to_csml_out, from_xml_to_csml_lex);
 					if (not tag_stack.empty()) {
 						exit(POLUTED_STACK);
 					}
