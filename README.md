@@ -1,5 +1,5 @@
 # Contra
-> The Contra utility converts so called the "C Style Markup Language" to HTML/XML and back.
+> The Contra utility converts the so called "C Style Markup Language" to HTML/XML and back.
 > The primary aim is to maximize both editability and readability by dynamizing the markup representation.
 
 The Contra utility itself is meant to serve as a backbone for other tools,
