@@ -51,8 +51,7 @@ code:
 test: ${OUT}
 	${DIFF} <(bat ${TEST.d}/draft.html) <(${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/draft.csml)
 	${DIFF} <(bat ${TEST.d}/draft.csml) <(${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html)
-	#bat --paging=never ${TEST.d}/draft.html
-	#${WRAP} ./${OUT} -s 'html' -x ${TEST.d}/draft.html
+	${DIFF} <(bat ${TEST.d}/complex.html) <(${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/complex.csml)
 	#bat --paging=never ${TEST.d}/complex.csml
 	#${WRAP} ./${OUT} -s 'html' -c ${TEST.d}/complex.csml
 	#bat --paging=never ${TEST.d}/complex.html
