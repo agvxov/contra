@@ -21,7 +21,7 @@ OBJECT := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT := ${OBJECT:.cpp=.o}
 OBJECT := ${OBJECT:.c=.o}
 
-DIFF := diff -s -y -t --color=always
+DIFF := diff --side-by-side --report-identical-files --expand-tabs --ignore-trailing-space --color=always
 
 %.cpp: %.l
 	${LEX} --prefix=$(basename $(notdir $<))_ ${LFLAGS} -o $@ $<
