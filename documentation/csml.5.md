@@ -75,6 +75,16 @@ or until the end of the _head_ (closing ')').
 
 The __body__ is everything enclosed by curly braces ("{}").
 It may contain more _tags_ or _comments_.
+The body may be be enclosed in multiple curly braces,
+in which case inside the body,
+less curly braces than the body has,
+are not interpreted as part of a tag.
+They need not be escaped.
+```
+script {{
+    if (true) { /* this is fine */ }
+}}
+```
 
 ### Escaping
 Any special character may be escaped by prepending it with a backslash ('\').
