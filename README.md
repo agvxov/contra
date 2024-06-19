@@ -38,11 +38,11 @@ For any of the below plugins to work,
 the Contra executable will have to be installed on your system.
 
 ##### Build from source
-Contra is written in C,
+Contra is written in C++,
 it must be compiled.
 
-Make sure you have the following dependencies:
- + a C compiler (e.g. gcc)
+Make sure you have the following compile time dependencies:
+ + a C++ compiler (e.g. g++)
  + Make (e.g. GNU Make)
  + Flex
 
