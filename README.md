@@ -1,9 +1,15 @@
 # Contra
-> The Contra utility converts the so called "C Style Markup Language" to HTML/XML and back.
+> The Contra utility converts [C Style Markup Language](definition of C style markup) to HTML/XML and back.
 > The primary aim is to maximize both editability and readability by dynamizing the markup representation.
 
-The Contra utility itself is meant to serve as a backbone for other tools,
-such as text editor or IDE extensions.
+## Who is it for
+Contra is meant for toolmakers who are building text editors and IDEs
+
+## Example
+
+I would show a side by side picture here.  I don't know how to do that with markup.
+
+
 
 See `documentation/*` for the exact details or follow this README for a quick-start.
 
@@ -33,7 +39,20 @@ then to type out this with:
 
 Yet, the two are equivalent using Contra.
 
-### Installantion
+### Using Contra
+
+```sh
+contra input.txt > output.txt
+
+```
+
+### Who isn't it for?
+
+What seems like a good usecase for Contra that visotrs ask about, but really doesn't fit with what your trying to accomplish?
+
+
+
+### Installation
 For any of the below plugins to work,
 the Contra executable will have to be installed on your system.
 
@@ -68,7 +87,7 @@ $ make vim_install
 ```
 
 #### Visual Studio Code
-The VS Code extension is written in TypeScript,
+The [VS Code extension](Link) is written in TypeScript,
 so it has to be compiled too.
 This will require a million node modules.
 You are advised to run:

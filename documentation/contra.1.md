@@ -11,6 +11,9 @@ The primary aim is to maximize both editability and readability by dynamizing th
 
 `c`
 : the input is to be force interpeted as CSML
+```sh
+#show an example of using -c
+```
 
 `x`
 : the input is to be force interpeted as XML/HTML
