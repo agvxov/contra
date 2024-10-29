@@ -1,11 +1,19 @@
 # Contra
-> The Contra utility converts the so called "C Style Markup Language" to HTML/XML and back.
-> The primary aim is to maximize both editability and readability by dynamizing the markup representation.
+> The Contra utility converts the so called [C Style Markup Language](documentation/csml.5.md) to HTML/XML and back.
 
-The Contra utility itself is meant to serve as a backbone for other tools,
-such as text editor or IDE extensions.
+### Rationale
+Contra removes visual clutter from HTML/XML
+and makes editing the markup easier,
+especially for people with a background in C style languages
+(including Javascript).
 
-See `documentation/*` for the exact details or follow this README for a quick-start.
+The preference for this kind of syntax can be observed else where too.
+QML and the Groovy XmlTemplateEngine markup syntaxes are similar and
+served as inspiration for Contra.
+However,
+they require altering your tech stack.
+Contra can be used seamlessly with your web projects,
+since it can dynamically convert within your editor.
 
 ### Example
 
@@ -32,6 +40,12 @@ then to type out this with:
 ```
 
 Yet, the two are equivalent using Contra.
+
+### Notes
+The Contra utility itself is meant to serve as a backbone for other tools,
+such as text editor or IDE extensions.
+
+More documentation is available at `documentation/*`.
 
 ### Installantion
 For any of the below plugins to work,
