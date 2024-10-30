@@ -6,7 +6,7 @@ ifeq (${DEBUG}, 1)
   CXXFLAGS += -DDEBUG -O0 -ggdb -fno-inline	
   WRAP     := valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all 
 else
-  CXXFLAGS += -O3 -fno-stack-protector -fno-exceptions -fno-rtti
+  CXXFLAGS += -std=c++17 -O3 -fno-stack-protector -fno-exceptions -fno-rtti
 endif
 
 OUT := contra
